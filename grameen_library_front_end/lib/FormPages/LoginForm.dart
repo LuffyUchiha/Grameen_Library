@@ -171,7 +171,7 @@ class _LoginFormState extends State<LoginForm> {
                         }finally{
                           client.close();
                         }
-                        //back_end connect to be inserted
+                        //back_end connect
                         print(_id);
                         print(_password);
                         if(res!=1){
@@ -199,11 +199,26 @@ class _LoginFormState extends State<LoginForm> {
                           sharedPreferences.setString("username", username);
                           sharedPreferences.setString("userid", _id);
                           sharedPreferences.setString("role", role);
+                          print("isLogged : " + sharedPreferences.getBool("isLogged").toString());
                           var redir;
                           if(role=='user'){
                             redir=UserPage();
                           }
                           else if(role=='donor'){
+                            var client = _getClient();
+                            try{
+                              await client.post("http://127.0.0.1:5000/get_num",
+                                  body : {"user_id":_id})
+                                  .then((response) {
+                                Map<String, dynamic> data = jsonDecode(response.body);
+                                sharedPreferences.setInt("book_count", data['Num']);;
+                              });
+                            }
+                            catch(e){
+                              print("Failed ->$e");
+                            }finally{
+                              client.close();
+                            }
                             redir=DonorPage();
                           }
                           else if(role=='panchayat'){

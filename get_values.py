@@ -30,6 +30,50 @@ def connect_Postgres(database, user, password, host="localhost"):
     return conn
 
 
+@app.route("/donate_book",methods=["GET","POST"])
+def donate_book():
+    id = dict(request.form)['id']
+    conn = connect_Postgres(
+        host="localhost",
+        database="Grameen_Library",
+        user="grlib",
+        password="password"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        book_ins_sql = """
+                
+                """
+        cur.execute(book_ins_sql, (id,))
+        num = cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        print(num)
+        return jsonify({"Num": num})
+
+
+@app.route("/get_num", methods=["GET","POST"])
+def get_book_num():
+    id = dict(request.form)['user_id']
+    conn = connect_Postgres(
+        host="localhost",
+        database="Grameen_Library",
+        user="grlib",
+        password="password"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        book_num_sql = """
+            SELECT no_of_books_donated from grlib.donor where grlib.donor.donor_id=%s
+            """
+        cur.execute(book_num_sql, (id,))
+        num = cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        print(num)
+        return jsonify({"Num": num})
+
+
 @app.route("/get_Panchs", methods=["GET"])
 def get_Panchayats():
     conn = connect_Postgres(
@@ -87,7 +131,7 @@ def don_response():
         INSERT INTO grlib.USER (Role_ID,User_First_Name,User_Last_Name,User_Mobile,password)
         VALUES (%s,%s,%s,%s,%s) RETURNING User_ID;
         """
-        cur.execute(user_insert_sql, (2, name[0], name[1], phone,password,))
+        cur.execute(user_insert_sql, (2, name[0], name[1], phone, password,))
         # Assumption that 2 is role id for donor and so on
         user_id = cur.fetchone()[0]
         cur.execute(donor_insert_sql, (user_id, name[0], name[1], phone, email,))
@@ -108,12 +152,12 @@ def user_response():
     if len(name) == 1:
         name.append("")
     panchayat = dict(request.form)['Panchayat']
-    #student = dict(request.form)['Student']
+    # student = dict(request.form)['Student']
     email = dict(request.form)['Email']
     phone = dict(request.form)['Phone']
-    #address = dict(request.form)['Address']
-    #id_proof = dict(request.form)['ID_proof']
-    #location_proof = dict(request.form)['Location_proof']
+    # address = dict(request.form)['Address']
+    # id_proof = dict(request.form)['ID_proof']
+    # location_proof = dict(request.form)['Location_proof']
     password = dict(request.form)['Password']
     conn = connect_Postgres(
         host="localhost",
@@ -123,7 +167,7 @@ def user_response():
     )
     if conn is not None:
         cur = conn.cursor()
-        village_select_query="""
+        village_select_query = """
             SELECT village_id from grlib.village where village_name= %s
             """
         borrower_insert_sql = """
@@ -135,11 +179,11 @@ def user_response():
                 INSERT INTO grlib.USER (Role_ID,User_First_Name,User_Last_Name,User_Mobile,password)
                 VALUES (%s,%s,%s,%s,%s) RETURNING User_ID;
                 """
-        cur.execute(user_insert_sql, (4, name[0], name[1], phone,password,))
+        cur.execute(user_insert_sql, (4, name[0], name[1], phone, password,))
         user_id = cur.fetchone()[0]
-        cur.execute(village_select_query,(panchayat,))
-        village_id=cur.fetchone()[0]
-        cur.execute(borrower_insert_sql,(name[0],name[1],phone,village_id))
+        cur.execute(village_select_query, (panchayat,))
+        village_id = cur.fetchone()[0]
+        cur.execute(borrower_insert_sql, (name[0], name[1], phone, village_id))
         conn.commit()
         cur.close()
         conn.close()
@@ -177,7 +221,7 @@ def pan_response():
                     INSERT INTO grlib.USER (Role_ID,User_First_Name,User_Last_Name,User_Mobile,password)
                     VALUES (%s,%s,%s,%s,%s) RETURNING User_ID;
                     """
-        cur.execute(user_insert_sql, (3, name[0], name[1], phone,password,))
+        cur.execute(user_insert_sql, (3, name[0], name[1], phone, password,))
         user_id = cur.fetchone()[0]
         cur.execute(panchayat_insert_sql,
                     (user_id, panchayat_name, panchayat_name, address, name[0] + name[1], phone, email))
@@ -217,7 +261,7 @@ def login_response():
             session['user_id'] = user_id
             cur.close()
             conn.close()
-            return jsonify({"Response": 1, "Name": user[0]+" "+user[1], "Role":user[2]})
+            return jsonify({"Response": 1, "Name": user[0] + " " + user[1], "Role": user[2]})
         else:
             cur.close()
             conn.close()

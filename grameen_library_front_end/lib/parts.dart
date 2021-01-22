@@ -285,3 +285,4 @@ class RegisterSide extends StatelessWidget {
     );
   }
 }
+
