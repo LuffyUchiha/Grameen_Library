@@ -30,9 +30,15 @@ def connect_Postgres(database, user, password, host="localhost"):
     return conn
 
 
+
 @app.route("/donate_book",methods=["GET","POST"])
 def donate_book():
     id = dict(request.form)['id']
+    book_title= dict(request.form)['book_title']
+    author_name= dict(request.form)['author_name']
+    ISBN=dict(request.form)['ISBN']
+    category=dict(request.form)['Category']
+    date=dict(request.form)['Date']
     conn = connect_Postgres(
         host="localhost",
         database="Grameen_Library",
@@ -41,18 +47,47 @@ def donate_book():
     )
     if conn is not None:
         cur = conn.cursor()
-        book_ins_sql = """
-                
-                """
-        cur.execute(book_ins_sql, (id,))
-        num = cur.fetchone()[0]
+        book_id=0
+        book_sql="""
+        SELECT book_id from grlib.book where isbn=%s
+        """
+        cur.execute(book_sql,(ISBN,))
+        res=cur.fetchall()
+        if res is None:
+            book_ins_sql="""
+            INSERT INTO grlib.BOOK (Donor_ID,Donate_Date,ISBN)
+            VALUES (%s,%s,%s) RETURNING book_ID
+            """
+            cur.execute(book_ins_sql,(id,date,ISBN,))
+            book_id=cur.fetchall()[0][0]
+        else:
+            book_id=res[0][0]
+        book_check_sql="""
+        SELECT no_of_copies_actual, no_of_copies_current from grlib.BOOK b left join grlib.book_details bd on b.ISBN=bd.\"ISBN\" where b.ISBN=%s and book_id=%d
+        """
+        cur.execute(book_check_sql,(ISBN,book_id,))
+        res=cur.fetchall()[0]
+        (actual_copies, current_copies) = (res[0], res[1])
+        if actual_copies is not None:
+            actual_copies+=1
+            current_copies+=1
+            book_update_sql="""
+            UPDATE grlib.BOOK_DETAIL set no_of_copies_actual=%d, no_of_copies_current=%d where book_id=%d 
+            """
+            cur.execute(book_update_sql,(actual_copies,current_copies,book_id,))
+        else:
+            book_detail_ins_sql = """
+                    INSERT INTO grlib.BOOK_DETAIL (Book_ID,Book_Title,ISBN,Author_Name,Category,no_of_copies_actual,no_of_copies_current)
+            VALUES (%s,%s,%s,%s,%s,%d,%d)
+                    """
+            cur.execute(book_ins_sql, (book_id,book_title,ISBN,author_name,category,1,1,))
         cur.close()
         conn.close()
-        print(num)
-        return jsonify({"Num": num})
+        print(book_id)
+        return jsonify({"Num": book_id})
 
 
-@app.route("/get_num", methods=["GET","POST"])
+@app.route("/get_num", methods=["GET","POST"]) #TODO name change
 def get_book_num():
     id = dict(request.form)['user_id']
     conn = connect_Postgres(
@@ -64,14 +99,18 @@ def get_book_num():
     if conn is not None:
         cur = conn.cursor()
         book_num_sql = """
-            SELECT no_of_books_donated from grlib.donor where grlib.donor.donor_id=%s
+            SELECT d.no_of_books_donated,b.donate_date from grlib.donor d join grlib.book b on d.donor_id=b.donor_id where d.donor_id=%s order by donate_date
             """
         cur.execute(book_num_sql, (id,))
-        num = cur.fetchone()[0]
+        res = cur.fetchall()
+        num=res[0][0]
+        date_list=[]
+        for i in res:
+            date_list.append(i[0][1])
         cur.close()
         conn.close()
         print(num)
-        return jsonify({"Num": num})
+        return jsonify({"Num": num,"Donate Dates":date_list})
 
 
 @app.route("/get_Panchs", methods=["GET"])
