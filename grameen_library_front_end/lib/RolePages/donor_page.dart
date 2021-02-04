@@ -1,15 +1,17 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:grameen_library_front_end/LoginPage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'package:grameen_library_front_end/static_pages.dart';
 import 'package:grameen_library_front_end/parts.dart';
 
-http.Client _getClient(){
+http.Client _getClient() {
   return http.Client();
 }
 
@@ -19,16 +21,16 @@ class DonorPage extends StatelessWidget {
   int num_of_books;
   bool isLogged;
 
-  DonorPage(){
+  DonorPage() {
     this.getDetails();
   }
 
-  Future<void> getDetails() async{
+  Future<void> getDetails() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     this.username = sharedPreferences.getString("username") ?? "Error";
     this.id = sharedPreferences.getString("userid") ?? "Error";
-    isLogged= sharedPreferences.getBool("isLogged") ?? false;
-    num_of_books=sharedPreferences.getInt("book_count");
+    isLogged = sharedPreferences.getBool("isLogged") ?? false;
+    num_of_books = sharedPreferences.getInt("book_count");
     print("isLogged : " + sharedPreferences.getBool("isLogged").toString());
   }
 
@@ -105,13 +107,7 @@ class Content extends StatelessWidget {
                 ),
               ],
             ),
-            Container(
-              color: Colors.orangeAccent,
-              constraints: BoxConstraints(
-                minWidth: sz.width * 0.4,
-                minHeight: sz.height * 0.4,
-              ),
-            ),
+            DashBoard(),
           ],
         ),
       ),
@@ -167,7 +163,7 @@ class RightSide extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => DonateBooks(),
+                      builder: (context) => _DonateBooks(),
                     ),
                   );
                 },
@@ -201,7 +197,9 @@ class RightSide extends StatelessWidget {
                   child: Text('Change Contact Details'),
                 ),
               ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.15,),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.15,
+              ),
             ],
           ),
         ],
@@ -224,222 +222,366 @@ class BookDetails extends StatelessWidget {
   }
 }
 
-class DonateBooks extends StatelessWidget {
-  GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-  String book_name;
-  String ISBN;
-  String author_name;
-  String category;
+class _DonateBooks extends StatefulWidget {
+
+//  String book_name;
+//
+//  String ISBN;
+//
+//  String author_name;
+//
+//  String category;
+//
   String id;
+
   bool isLogged;
 
-  DonateBooks(){
+  _DonateBooks() {
     this.getDetails();
   }
 
-  Future<void> getDetails() async{
+  Future<void> getDetails() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     this.id = sharedPreferences.getString("userid") ?? "Error";
-    isLogged= sharedPreferences.getBool("isLogged") ?? false;
+    isLogged = sharedPreferences.getBool("isLogged") ?? false;
     print("isLogged : " + sharedPreferences.getBool("isLogged").toString());
+  }
+
+  @override
+  __DonateBooksState createState() => __DonateBooksState();
+}
+
+class __DonateBooksState extends State<_DonateBooks> {
+  GlobalKey<FormState> formkey = GlobalKey<FormState>();
+
+  String book_name;
+
+  String ISBN;
+
+  String author_name;
+
+  String category;
+
+  String id;
+
+  bool isLogged;
+
+  int _num;
+
+  __DonateBooksState(
+//      {this.book_name,
+//      this.formkey,
+//      this.id,
+//      this.author_name,
+//      this.category,
+//      this.ISBN,
+//      this.isLogged}
+      );
+
+  Widget _formbook(int index) {
+    return Container(
+      child: TextFormField(
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: 'Book Number $index',
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     //TODO develop a donate form, not sure about the nuances so left blank
     BoxDecoration _decoration = DecorateField().decoration1();
-    return Container(
-      child: Form(
-        key: _formkey,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Donate Books',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.w500,
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Center(
+          child: Container(
+            padding:
+                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.5,
+            ),
+            child: Column(
+              children: [
+                Container(
+                  decoration: _decoration,
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Number of Books',
+                    ),
+                    validator: (String value) {
+                      try {
+                        var i = int.parse(value);
+                        return null;
+                      } on FormatException {
+                        return "Enter an integer";
+                      }
+                    },
+                    autovalidateMode: AutovalidateMode.always,
+                    onChanged: (String val) {
+                      setState(() {
+                        _num = int.parse(val);
+                      });
+                    },
+                  ),
                 ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    decoration: _decoration,
-                    constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.1,
-                      maxWidth: MediaQuery.of(context).size.width * 0.25,
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Book Name',
-                      ),
-                      onSaved: (String value) {
-                        book_name = value;
-                      },
-                    ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                  Container(
-                    decoration: _decoration,
-                    constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.1,
-                      maxWidth: MediaQuery.of(context).size.width * 0.25,
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'ISBN',
-                      ),
-                      onSaved: (String value) {
-                        ISBN = value;
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.01,
-                  ),
-                  Container(
-                    decoration: _decoration,
-                    constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.1,
-                      maxWidth: MediaQuery.of(context).size.width * 0.25,
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Author Name',
-                      ),
-                      onSaved: (String value) {
-                        author_name = value;
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.03,
-                  ),
-                  Container(
-                    decoration: _decoration,
-                    constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.1,
-                      maxWidth: MediaQuery.of(context).size.width * 0.25,
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Category',
-                      ),
-                      onSaved: (String value) {
-                        category = value;
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.03,
-                  ),
-                  Container(
-                    constraints: BoxConstraints(
-                      minWidth: 100,
-                      minHeight: 40,
-                    ),
-                    child: RaisedButton(
-                      color: Colors.lightBlue[600],
-                      onPressed: () async {
-                        if (!_formkey.currentState.validate()) return;
-                        _formkey.currentState.save();
-                        var client = _getClient();
-                        var username="";
-                        try{
-                          await client.post("http://127.0.0.1:5000/donate_book",
-                              body : {"book_name":book_name,
-                                "id":id,
-                                "ISBN":ISBN,
-                                "author_name":author_name,
-                                "category": category})
-                              .then((response) {
-                            Map<String, dynamic> data = jsonDecode(response.body);
-                          });
-                        }
-                        catch(e){
-                          print("Failed ->$e");
-                        }finally{
-                          client.close();
-                        }
-                        //back_end connect
-                        print(_id);
-                        print(_password);
-                        if(res!=1){
-                          await showDialog(
-                            context: context,
-                            builder: (context) => new AlertDialog(
-                              title: new Text('Wrong UserID/Password'),
-                              content: Text(
-                                  'Please try again.'),
-                              actions: <Widget>[
-                                new FlatButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // dismisses only the dialog and returns nothing
-                                  },
-                                  child: new Text('OK'),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        else{
-                          sharedPreferences = await SharedPreferences.getInstance();
-                          sharedPreferences.setBool("isLogged", true);
-                          sharedPreferences.setString("username", username);
-                          sharedPreferences.setString("userid", _id);
-                          sharedPreferences.setString("role", role);
-                          print("isLogged : " + sharedPreferences.getBool("isLogged").toString());
-                          var redir;
-                          if(role=='user'){
-                            redir=UserPage();
-                          }
-                          else if(role=='donor'){
-                            var client = _getClient();
-                            try{
-                              await client.post("http://127.0.0.1:5000/get_num",
-                                  body : {"user_id":_id})
-                                  .then((response) {
-                                Map<String, dynamic> data = jsonDecode(response.body);
-                                sharedPreferences.setInt("book_count", data['Num']);;
-                              });
-                            }
-                            catch(e){
-                              print("Failed ->$e");
-                            }finally{
-                              client.close();
-                            }
-                            redir=DonorPage();
-                          }
-                          else if(role=='panchayat'){
-                            redir=PanchayatPage();
-                          }
-                          else if(role=='admin'){
-
-                          }
-                          else{
-
-                          }
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => (redir),
-                          ));
-                        }
-                      },
-                      child: Text('Submit'),
-                    ),
-                  ),
-                ],
-              )
-            ]),
+                for (int i = 0; i < _num; i++) _formbook(i),
+              ],
+            ),
+          ),
+        ),
       ),
+    );
+//    return Container(
+//      child: Form(
+//        key: _formkey,
+//        child: Column(
+//            mainAxisAlignment: MainAxisAlignment.center,
+//            crossAxisAlignment: CrossAxisAlignment.start,
+//            children: <Widget>[
+//              Text(
+//                'Donate Books',
+//                style: TextStyle(
+//                  color: Colors.black,
+//                  fontSize: 30.0,
+//                  fontWeight: FontWeight.w500,
+//                ),
+//              ),
+//              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+//              Column(
+//                crossAxisAlignment: CrossAxisAlignment.center,
+//                children: <Widget>[
+//                  Container(
+//                    decoration: _decoration,
+//                    constraints: BoxConstraints(
+//                      maxHeight: MediaQuery.of(context).size.height * 0.1,
+//                      maxWidth: MediaQuery.of(context).size.width * 0.25,
+//                    ),
+//                    child: TextFormField(
+//                      decoration: InputDecoration(
+//                        border: OutlineInputBorder(),
+//                        labelText: 'Book Name',
+//                      ),
+//                      onSaved: (String value) {
+//                        book_name = value;
+//                      },
+//                    ),
+//                  ),
+//                  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+//                  Container(
+//                    decoration: _decoration,
+//                    constraints: BoxConstraints(
+//                      maxHeight: MediaQuery.of(context).size.height * 0.1,
+//                      maxWidth: MediaQuery.of(context).size.width * 0.25,
+//                    ),
+//                    child: TextFormField(
+//                      decoration: InputDecoration(
+//                        border: OutlineInputBorder(),
+//                        labelText: 'ISBN',
+//                      ),
+//                      onSaved: (String value) {
+//                        ISBN = value;
+//                      },
+//                    ),
+//                  ),
+//                  SizedBox(
+//                    height: MediaQuery.of(context).size.height * 0.01,
+//                  ),
+//                  Container(
+//                    decoration: _decoration,
+//                    constraints: BoxConstraints(
+//                      maxHeight: MediaQuery.of(context).size.height * 0.1,
+//                      maxWidth: MediaQuery.of(context).size.width * 0.25,
+//                    ),
+//                    child: TextFormField(
+//                      decoration: InputDecoration(
+//                        border: OutlineInputBorder(),
+//                        labelText: 'Author Name',
+//                      ),
+//                      onSaved: (String value) {
+//                        author_name = value;
+//                      },
+//                    ),
+//                  ),
+//                  SizedBox(
+//                    height: MediaQuery.of(context).size.height * 0.03,
+//                  ),
+//                  Container(
+//                    decoration: _decoration,
+//                    constraints: BoxConstraints(
+//                      maxHeight: MediaQuery.of(context).size.height * 0.1,
+//                      maxWidth: MediaQuery.of(context).size.width * 0.25,
+//                    ),
+//                    child: TextFormField(
+//                      decoration: InputDecoration(
+//                        border: OutlineInputBorder(),
+//                        labelText: 'Category',
+//                      ),
+//                      onSaved: (String value) {
+//                        category = value;
+//                      },
+//                    ),
+//                  ),
+//                  SizedBox(
+//                    height: MediaQuery.of(context).size.height * 0.03,
+//                  ),
+//                  Container(
+//                    constraints: BoxConstraints(
+//                      minWidth: 100,
+//                      minHeight: 40,
+//                    ),
+//                    child: RaisedButton(
+//                      color: Colors.lightBlue[600],
+//                      onPressed: () async {
+//                        if (!_formkey.currentState.validate()) return;
+//                        _formkey.currentState.save();
+//                        var client = _getClient();
+//                        var username="";
+//                        try{
+//                          await client.post("http://127.0.0.1:5000/donate_book",
+//                              body : {"book_name":book_name,
+//                                "id":id,
+//                                "ISBN":ISBN,
+//                                "author_name":author_name,
+//                                "category": category})
+//                              .then((response) {
+//                            Map<String, dynamic> data = jsonDecode(response.body);
+//                          });
+//                        }
+//                        catch(e){
+//                          print("Failed ->$e");
+//                        }finally{
+//                          client.close();
+//                        }
+/////////////////////////////////////////////////////////////////////////////////////////////////
+    //back_end connect
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//                        print(_id);
+//                        print(_password);
+//                        if(res!=1){
+//                          await showDialog(
+//                            context: context,
+//                            builder: (context) => new AlertDialog(
+//                              title: new Text('Wrong UserID/Password'),
+//                              content: Text(
+//                                  'Please try again.'),
+//                              actions: <Widget>[
+//                                new FlatButton(
+//                                  onPressed: () {
+//                                    Navigator.of(context)
+//                                        .pop(); // dismisses only the dialog and returns nothing
+//                                  },
+//                                  child: new Text('OK'),
+//                                ),
+//                              ],
+//                            ),
+//                          );
+//                        }
+//                        else{
+//                          sharedPreferences = await SharedPreferences.getInstance();
+//                          sharedPreferences.setBool("isLogged", true);
+//                          sharedPreferences.setString("username", username);
+//                          sharedPreferences.setString("userid", _id);
+//                          sharedPreferences.setString("role", role);
+//                          print("isLogged : " + sharedPreferences.getBool("isLogged").toString());
+//                          var redir;
+//                          if(role=='user'){
+//                            redir=UserPage();
+//                          }
+//                          else if(role=='donor'){
+//                            var client = _getClient();
+//                            try{
+//                              await client.post("http://127.0.0.1:5000/get_num",
+//                                  body : {"user_id":_id})
+//                                  .then((response) {
+//                                Map<String, dynamic> data = jsonDecode(response.body);
+//                                sharedPreferences.setInt("book_count", data['Num']);;
+//                              });
+//                            }
+//                            catch(e){
+//                              print("Failed ->$e");
+//                            }finally{
+//                              client.close();
+//                            }
+//                            redir=DonorPage();
+//                          }
+//                          else if(role=='panchayat'){
+//                            redir=PanchayatPage();
+//                          }
+//                          else if(role=='admin'){
+//
+//                          }
+//                          else{
+//
+//                          }
+//                          Navigator.of(context).push(MaterialPageRoute(
+//                            builder: (context) => (redir),
+//                          ));
+//                        }
+//                      },
+//                      child: Text('Submit'),
+//                    ),
+//                  ),
+//                ],
+//              )
+//            ]),
+//      ),
+//    );
+  }
+}
+
+class DashBoard extends StatelessWidget {
+  Map donor_data;
+
+  DashBoard({
+    this.donor_data,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (donor_data == null) {
+      donor_data = {
+        'joining date': DateTime.utc(2019, 5, 4),
+        'donated books': {
+          DateTime.utc(2019, 6, 12, 23, 14, 23),
+          DateTime.utc(2019, 6, 13, 23, 14, 23),
+          DateTime.utc(2019, 6, 14, 23, 14, 23),
+          DateTime.utc(2019, 6, 15, 23, 14, 23),
+          DateTime.utc(2019, 6, 16, 23, 14, 23),
+        }
+      };
+    }
+    HashSet<DateTime> donations = donor_data['donated books'];
+    List<List<int>> dons = new List();
+    donations.forEach((element) {
+      dons.add([element.year, element.month]);
+    });
+    List<int> join_date = [
+      donor_data['joining date'].year,
+      donor_data['joining date'].month
+    ];
+    print(dons);
+    print(join_date);
+    return Container(
+      child: SfCartesianChart(
+          primaryXAxis: CategoryAxis(),
+          title: ChartTitle(text: 'Donations by you'), //Chart title.
+          tooltipBehavior: TooltipBehavior(
+            enable: true,
+          ),
+          series: <LineSeries<int, String>>[
+            LineSeries<int, String>(
+                dataSource: [1, 2, 3, 4],
+                xValueMapper: (int x, _) {
+                  return x.toString();
+                },
+                yValueMapper: (int x, _) => x,
+                dataLabelSettings: DataLabelSettings(
+                    isVisible: true) // Enables the data label.
+                )
+          ]),
     );
   }
 }

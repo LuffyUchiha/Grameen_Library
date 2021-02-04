@@ -3,10 +3,7 @@ import time
 import psycopg2
 from flask_cors import CORS, cross_origin
 
-app = Flask(__name__)
-app.secret_key = 'random string'
-CORS(app=app)
-app.config['CORS_HEADERS'] = 'Content-Type'
+from UI import app
 
 
 def connect_Postgres(database, user, password, host="localhost"):
@@ -311,7 +308,7 @@ def login_response():
 
 @app.route("/")
 def hello_world():
-    return "Hello World"
+    return "hello world"
 
 
 # app.add_url_rule('/','home',home)

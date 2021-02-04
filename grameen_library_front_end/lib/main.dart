@@ -27,18 +27,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/',
-      routes:{
-        '/':(context) => LoginPage(),
-        '/register/donor':(context)=>DonorForm(),
-        '/register/volunteer':(context)=>VolunteerForm(),
-        '/register/user':(context)=>userForm(),
-        '/register/panchayat':(context)=>PanchayatForm(),
-        '/login':(context)=>LoginForm()
-      },
+//      initialRoute: '/',
+//      routes:{
+//        '/':(context) => LoginPage(),
+//        '/register/donor':(context)=>DonorForm(),
+//        '/register/volunteer':(context)=>VolunteerForm(),
+//        '/register/user':(context)=>userForm(),
+//        '/register/panchayat':(context)=>PanchayatForm(),
+//        '/login':(context)=>LoginForm()
+//      },
       debugShowCheckedModeBanner: false,
 //      home: UserPage(),
-//      home: DonorPage(),
+      home: DonorPage(),
 //      home: PanchayatPage(),
     );
   }

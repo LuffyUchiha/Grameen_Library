@@ -1,0 +1,40 @@
+{% extends "bootstrap_enabler.html" %}
+
+{% block head %}
+<title>Landing Page</title>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+	<div class="jumbotron" align="center">
+		<span>Grameen Library Landing Page</span>
+	</div>
+</div>
+<div class="container">
+	<div class = "row">
+		<div class="col-lg-4">
+			<a href="{{ url_for('about_page') }}" class="d-flex">About Grameen Library</a>
+			<a href="{{ url_for('donation_info_page') }}" class="d-flex">How to Donate Books</a>
+			<a href="{{ url_for('library_info_page') }}" class="d-flex">Using the Library</a>
+		</div>
+		<div class="col-lg-4">
+			<div class="form-group">
+			  <label for="usr">Name:</label>
+			  <input type="text" class="form-control" id="usr">
+			</div>
+			<div class="form-group">
+			  <label for="pwd">Password:</label>
+			  <input type="password" class="form-control" id="pwd">
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</div>
+		<div class = "col-lg-2 col-lg-offset-2">
+			<p>Registration</p>
+			<p>Volunteer</p>
+			<p>Donor</p>
+			<p>User</p>
+			<p>Panchayat</p>
+		</div>
+	</div>
+</div>
+{% endblock %}
