@@ -1,16 +1,21 @@
 from flask import *
 from flask_cors import CORS, cross_origin
 
+from forms import LandingPageLoginForm
+
 app = Flask(__name__)
 app.secret_key = 'random string'
 CORS(app=app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
-@app.route("/")
-@app.route("/landing_page")
+@app.route("/", methods=['GET', 'POST'])
+@app.route("/landing_page", methods=['GET', 'POST'])
 def landing_page():
-    return render_template('landing_page.html')
+    login_form = LandingPageLoginForm()
+    if login_form.validate_on_submit():
+        print('username: {}\npassword: {}'.format(login_form.username.data, login_form.password.data))
+    return render_template('landing_page.html', form=login_form)
 
 
 @app.route("/about_grameen_library")
@@ -38,3 +43,4 @@ def donor_page(username):
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", debug=True)
+
