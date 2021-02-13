@@ -28,7 +28,6 @@ def connect_Postgres(database, user, password, host="localhost"):
 
 
 
-@app.route("/donate_book",methods=["GET","POST"])
 def donate_book():
     id = dict(request.form)['id']
     book_title= dict(request.form)['book_title']
@@ -84,7 +83,7 @@ def donate_book():
         return jsonify({"Num": book_id})
 
 
-@app.route("/get_num", methods=["GET","POST"]) #TODO name change
+#TODO name change
 def get_book_num():
     id = dict(request.form)['user_id']
     conn = connect_Postgres(
@@ -110,7 +109,7 @@ def get_book_num():
         return jsonify({"Num": num,"Donate Dates":date_list})
 
 
-@app.route("/get_Panchs", methods=["GET"])
+
 def get_Panchayats():
     conn = connect_Postgres(
         host="localhost",
@@ -132,7 +131,7 @@ def get_Panchayats():
         return s
 
 
-@app.route("/register/volunteer", methods=["POST"])
+
 def vol_response():
     name = dict(request.form)['name']
     pmi_id = dict(request.form)['pmi_id']
@@ -143,7 +142,7 @@ def vol_response():
     return jsonify({"response": res})
 
 
-@app.route("/register/donor", methods=["POST"])
+
 def don_response():
     name = dict(request.form)['Name'].split(maxsplit=1)
     if len(name) == 1:
@@ -182,7 +181,7 @@ def don_response():
     return jsonify({"User ID": user_id, "Name": name[0], "response": res})
 
 
-@app.route("/register/user", methods=["POST"])
+
 def user_response():
     name = dict(request.form)['Name'].split(maxsplit=1)
     if len(name) == 1:
@@ -230,7 +229,7 @@ def user_response():
     return jsonify({"User ID": user_id, "response": res})
 
 
-@app.route("/register/panchayat", methods=["POST"])
+
 def pan_response():
     name = dict(request.form)['PoC Name'].split(maxsplit=1)
     if len(name) == 1:
@@ -271,8 +270,6 @@ def pan_response():
     return jsonify({"User ID": user_id, "Name": name[0], "response": res})
 
 
-@app.route("/login", methods=["POST"])
-@cross_origin()
 def login_response():
     print(dict(request.form))
     user_id = dict(request.form)['user_id']
@@ -304,11 +301,6 @@ def login_response():
             return jsonify({"Response": 0})
     res = time.ctime()
     return jsonify({"Response": -1})
-
-
-@app.route("/")
-def hello_world():
-    return "hello world"
 
 
 # app.add_url_rule('/','home',home)
