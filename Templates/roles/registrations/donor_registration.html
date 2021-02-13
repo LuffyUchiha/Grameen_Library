@@ -2,34 +2,49 @@
 
 {% block body %}
 
-<form method="post" action="">
-    {{ form.hidden_tag() }}
-    <div class="container">
-        <fieldset class="form-group">
-        <legend class="border-bottom mb-4">Login</legend>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-            {% endif %}
-        {% endwith %}
-        <div class="form-group">
-            {{ form.username.label(class="form-control-label") }}
+<div class="container">
+    <form method="post" action="">
+        {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Login</legend>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                    {% endif %}
 
-            {{ form.username(class="form-control form-control-lg") }}
-        </div>
+                    <div class="form-group">
+                        {{ form.username.label(class="form-control-label") }}
+                        {{ form.username(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password.label(class="form-control-label") }}
+                        {{ form.password(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form_group">
+                        {{ form.confirm_password.label(class="form-control-label") }}
+                        {{ form.confirm_password(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form_group">
+                        {{ form.email.label(class="form-control-label") }}
+                        {{ form.email(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form_group">
+                        {{ form.phone_number.label(class="form-control-label") }}
+                        {{ form.phone_number(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form_group">
+                        {{ form.pmi_member.label(class="form-control-label") }}
+                        {{ form.pmi_member(class="form-control form-control-lg") }}
+                </div>
+                {% endwith %}
+            </fieldset>
         <div class="form-group">
-            {{ form.password.label(class="form-control-label") }}
-            {{ form.password(class="form-control form-control-lg") }}
+            {{ form.submit(class="btn btn-outline-info") }}
         </div>
-    </fieldset>
-    <div class="form-group">
-        {{ form.submit(class="btn btn-outline-info") }}
-    </div>
-    </div>
-</form>
-
+    </form>
+</div>
 {% endblock body %}

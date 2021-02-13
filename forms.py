@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Email, EqualTo
+from wtforms.validators import DataRequired, Email, EqualTo, NumberRange
 
 
 class LandingPageLoginForm(FlaskForm):
@@ -10,16 +10,17 @@ class LandingPageLoginForm(FlaskForm):
 
 
 class DonorRegistrationForm(FlaskForm):
-    username = StringField('Name', validators=[DataRequired()])
-    Email = StringField('Email', validators=[DataRequired(), Email()])
+    username = StringField('Userame', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo(password)])
-    pmi_member = BooleanField('Are you a PMIPCC member?', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    phone_number = StringField('Phone No.', validators=[DataRequired()])
+    pmi_member = BooleanField('Are you a PMIPCC member?')
     submit = SubmitField()
 
 class UserRegistrationForm(FlaskForm):
     username = StringField('Name', validators=[DataRequired()])
-    Email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo(password)])
     pmi_member = BooleanField('Are you a PMIPCC member?', validators=[DataRequired()])
@@ -27,7 +28,7 @@ class UserRegistrationForm(FlaskForm):
 
 class PanchayatRegistrationForm(FlaskForm):
     username = StringField('Name', validators=[DataRequired()])
-    Email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo(password)])
     pmi_member = BooleanField('Are you a PMIPCC member?', validators=[DataRequired()])
