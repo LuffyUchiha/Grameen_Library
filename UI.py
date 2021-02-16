@@ -1,7 +1,7 @@
 from flask import *
 from flask_cors import CORS, cross_origin
 
-from forms import LandingPageLoginForm, DonorRegistrationForm, UserRegistrationForm, PanchayatRegistrationForm
+from forms import *
 
 app = Flask(__name__)
 app.secret_key = 'random string'
@@ -37,7 +37,7 @@ def landing_page():
         print('username: {}\npassword: {}'.format(username, password))
         #TODO validate the with a query
         if login_form.username.data == "donor" and login_form.password.data == "pass":
-            return render_template('roles/donor_page.html', user_id=login_form.username.data)
+            return render_template('roles/donor/donor_page.html', user_id=login_form.username.data)
         else:
             flash(message='Incorrect credentials, please try again', category='danger')
     return render_template('landing_page.html', form=login_form)
@@ -46,9 +46,11 @@ def landing_page():
 
 
 
-# -------------------------------------------------#
+#--------------------------------------------------#
 #Back end related part of the code
+#--------------------------------------------------#
 
+#donor stuff
 
 @app.route("/donor/<username>")
 def donor_page(username):
@@ -57,7 +59,7 @@ def donor_page(username):
     :param username: String
     :return: html template
     """
-    return render_template('roles/donor_page.html', user_id=username)
+    return render_template('roles/donor/donor_page.html', user_id=username)
 
 @app.route("/registration/donor", methods=['GET', 'POST'])
 def donor_registration_page():
@@ -80,9 +82,14 @@ def donor_registration_page():
         print(username, password, email, phone, pmi_member)
 
         #TODO store the above details if valid. redirect to a different page is invalid
-        return render_template('roles/donor_page.html', user_id=username)
+        return redirect(url_for('donor_page', username=username))
 
     return render_template('roles/registrations/donor_registration.html', form=donor_form)
+
+@app.route("/donor/<username>/donate_books", methods=['GET','POST'])
+def donor_donation_page(username):
+    donation_form = DonorDonateForm()
+    return render_template('roles/donor/donate_books.html')
 
 @app.route("/registration/user")
 def user_registration_page():

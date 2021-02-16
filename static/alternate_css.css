@@ -7,3 +7,21 @@
     font-size:x-large;
     font-weight: bolder;
 }
+
+.userpageheader{
+    color: rgb(7, 130, 202);
+    font-weight: 900;
+}
+
+.userpagebody{
+    color:rgb(7, 150, 202);
+    font-weight: 400;
+}
+
+.btn-dark{
+    background-color:rgb(7, 100, 202);
+}
+
+.navbar-dark{
+    color:rgb(7, 40, 202);
+}

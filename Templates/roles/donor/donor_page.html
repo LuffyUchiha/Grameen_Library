@@ -13,7 +13,7 @@
 	<div class="row justify-content-center">
 		<div class="col-6">
 			<div class="row justify-content-center">
-				<p class="userpagebody">Donor ID: XXXX</p>
+				<p class="userpagebody">Donor ID: {{user_id}}</p>
 			</div>
 		</div>
 		<div class="col-6">
@@ -31,7 +31,7 @@
 	<div class="row justify-content-center">
 		<div class="col-6">
 			<div class="row justify-content-center">
-				<a type="button" class="btn btn-lg btn-dark" href="#">Donate Books</a> <br>
+				<a type="button" class="btn btn-lg btn-dark" href="{{ url_for('donor_donation_page', username=user_id) }}">Donate Books</a> <br>
 			</div>
 			<div class="row justify-content-center">
 				<p>Give your books a second life... or maybe a third one</p>
@@ -40,10 +40,10 @@
 		</div>
 		<div class="col-6">
 			<div class="row justify-content-center">
-				<a type="button" class="btn btn-lg btn-dark" href="#">book usage</a>
+				<a type="button" class="btn btn-lg btn-dark" href="#">Book usage</a>
 			</div>
 			<div class="row justify-content-center">
-				<p> If you donated your books, see where they found their new homes</p>
+				<p> If you have donated your books, see where they found their new homes</p>
 			</div>
 		</div>
 	</div>
