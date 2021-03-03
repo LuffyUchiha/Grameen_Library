@@ -1,9 +1,65 @@
+{% extends "bootstrap_enabler.html" %}
+
 {% block head %}
 <title> Donate Books</title>
 {% endblock head %}
 
 {% block body %}
-<div class="container">
-    <h2>Donation Page</h2>
+<!--<nav class="navbar navbar-dark navbar-expand-sm fixed-top">-->
+<!--        <div class="container">-->
+<!--            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">-->
+<!--                <span class="navbar-toggler-icon"></span>-->
+<!--            </button>-->
+<!--           <a class="navbar-brand" href="#"><a class="navbar-brand mr-auto" href="{{url_for('landing_page')}}"><img src="/static/images/grameen_library_logo.jpeg" height="40" width="40"></a>-->
+<!--        </a>-->
+<!--                <div class="collapse navbar-collapse" id="Navbar">-->
+<!--                    <ul class="navbar-nav mr-auto">-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('about_page') }}">About Grameen Library</a></li>-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('donation_info_page') }}"> About Donation</a></li>-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('library_info_page') }}"> About Usage</a></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--        </div>-->
+<!--</nav>-->
+<div style="background-color:rgb(7, 173, 202);height:10vh"></div>
+<div style="background-color:rgb(7, 173, 202)">
+    <div class="container">
+        <div class="card border border-success">
+            <div style="background-color:white">
+                <form method="post" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Please enter the book details you know</legend>
+                    <div class="form-group mb-5 mt-3">
+                        {{ form.book_name.label(class="form-control-label") }}
+                        {{ form.book_name(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-group mb-5">
+                        {{ form.author_name.label(class="form-control-label") }}
+                        {{ form.author_name(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-group mb-5">
+                        {{ form.ISBN.label(class="form-control-label") }}
+                        {{ form.ISBN(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-group mb-3">
+                        {{ form.category.label(class="form-control-label") }}
+                        {{ form.category(class="form-control form-control-lg") }}
+                    </div>
+                </fieldset>
+                <div class="form-group row">
+                    <div class="col-6">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+                    <div class="col-6">
+                        <a class="btn btn-outline-info" type="button" href="{{ url_for('donor_page', username=username) }}"> Go Back</a>
+                    </div>
+
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
 </div>
+<div style="background-color:rgb(7, 173, 202);height:25vh"></div>
 {% endblock body %}

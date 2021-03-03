@@ -6,6 +6,7 @@
     color:floralwhite;
     font-size:x-large;
     font-weight: bolder;
+
 }
 
 .userpageheader{
@@ -23,5 +24,6 @@
 }
 
 .navbar-dark{
-    color:rgb(7, 40, 202);
+    /* background-color:rgb(7, 220, 202); */
+    background-color: floralwhite;
 }

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Email, EqualTo, NumberRange, Length
 
 
@@ -39,4 +39,14 @@ class PanchayatRegistrationForm(FlaskForm):
 
 
 class DonorDonateForm(FlaskForm):
+    no_of_books = IntegerField('Number of books', validators=[DataRequired()])
+    submit = SubmitField()
+
+
+class DonationTemplate(FlaskForm):
+    book_name = StringField('Book Name')
+    ISBN = StringField('ISBN')
+    author_name = StringField('Author Name')
+    category = StringField('Category')
+    submit = SubmitField('Donate')
     pass

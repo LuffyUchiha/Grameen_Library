@@ -6,6 +6,22 @@
 
 
 {% block body %}
+<!--<nav class="navbar navbar-dark navbar-expand-sm fixed-top">-->
+<!--        <div class="container">-->
+<!--            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">-->
+<!--                <span class="navbar-toggler-icon"></span>-->
+<!--            </button>-->
+<!--           <a class="navbar-brand" href="#"><a class="navbar-brand mr-auto" href="{{url_for('landing_page')}}"><img src="/static/images/grameen_library_logo.jpeg" height="40" width="40"></a>-->
+<!--        </a>-->
+<!--                <div class="collapse navbar-collapse" id="Navbar">-->
+<!--                    <ul class="navbar-nav mr-auto">-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('about_page') }}">About Grameen Library</a></li>-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('donation_info_page') }}"> About Donation</a></li>-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('library_info_page') }}"> About Usage</a></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--        </div>-->
+<!--</nav>-->
 <div class = "container">
 	<div class="row justify-content-center mb-5 mt-5">
 		<h3 class="userpageheader">Donor Dashboard</h3>
@@ -31,7 +47,7 @@
 	<div class="row justify-content-center">
 		<div class="col-6">
 			<div class="row justify-content-center">
-				<a type="button" class="btn btn-lg btn-dark" href="{{ url_for('donor_donation_page', username=user_id) }}">Donate Books</a> <br>
+				<a type="button" class="btn btn-lg btn-dark" href="{{ url_for('donor_donation_page', username=username) }}">Donate Books</a> <br>
 			</div>
 			<div class="row justify-content-center">
 				<p>Give your books a second life... or maybe a third one</p>

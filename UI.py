@@ -37,7 +37,7 @@ def landing_page():
         print('username: {}\npassword: {}'.format(username, password))
         #TODO validate the with a query
         if login_form.username.data == "donor" and login_form.password.data == "pass":
-            return render_template('roles/donor/donor_page.html', user_id=login_form.username.data)
+            return render_template('roles/donor/donor_page.html', username=login_form.username.data)
         else:
             flash(message='Incorrect credentials, please try again', category='danger')
     return render_template('landing_page.html', form=login_form)
@@ -59,7 +59,7 @@ def donor_page(username):
     :param username: String
     :return: html template
     """
-    return render_template('roles/donor/donor_page.html', user_id=username)
+    return render_template('roles/donor/donor_page.html', username=username)
 
 @app.route("/registration/donor", methods=['GET', 'POST'])
 def donor_registration_page():
@@ -88,8 +88,26 @@ def donor_registration_page():
 
 @app.route("/donor/<username>/donate_books", methods=['GET','POST'])
 def donor_donation_page(username):
-    donation_form = DonorDonateForm()
-    return render_template('roles/donor/donate_books.html')
+    donation_form = DonationTemplate()
+    books_donated = list()
+    if donation_form.validate_on_submit():
+        book_name = donation_form.book_name.data
+        ISBN = donation_form.ISBN.data
+        author_name = donation_form.author_name.data
+        category = donation_form.category.data
+
+        books_donated.append(
+            {
+                'book_name': book_name,
+                'ISBN': ISBN,
+                'author_name': author_name,
+                'category': category,
+            }
+        )
+        print(books_donated)
+        return redirect(url_for('donor_donation_page', username=username))
+
+    return render_template('roles/donor/donate_books.html', form=donation_form, username=username)
 
 @app.route("/registration/user")
 def user_registration_page():
