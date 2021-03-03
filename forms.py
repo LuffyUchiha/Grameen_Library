@@ -16,7 +16,6 @@ class DonorRegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     phone_number = StringField('Phone No.', validators=[DataRequired()])
-    pmi_member = BooleanField('Are you a PMIPCC member?')
     submit = SubmitField()
 
 
@@ -25,7 +24,6 @@ class UserRegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo(password)])
-    pmi_member = BooleanField('Are you a PMIPCC member?', validators=[DataRequired()])
     submit = SubmitField()
 
 
@@ -34,7 +32,6 @@ class PanchayatRegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo(password)])
-    pmi_member = BooleanField('Are you a PMIPCC member?', validators=[DataRequired()])
     submit = SubmitField()
 
 

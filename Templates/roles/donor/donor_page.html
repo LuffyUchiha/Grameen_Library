@@ -24,12 +24,21 @@
 <!--</nav>-->
 <div class = "container">
 	<div class="row justify-content-center mb-5 mt-5">
-		<h3 class="userpageheader">Donor Dashboard</h3>
+		<div class="col-6">
+			<div class="row justify-content-end">
+				<h3 class="userpageheader">Donor Dashboard</h3>
+			</div>
+		</div>
+		<div class="col-6">
+			<div class="row justify-content-end">
+				<a type="button" href="{{url_for('landing_page')}}" class="btn btn-danger btn-danger"> Logout </a>
+			</div>
+		</div>
 	</div>
 	<div class="row justify-content-center">
 		<div class="col-6">
 			<div class="row justify-content-center">
-				<p class="userpagebody">Donor ID: {{user_id}}</p>
+				<p class="userpagebody">Donor ID: {{username}}</p>
 			</div>
 		</div>
 		<div class="col-6">
@@ -38,11 +47,14 @@
 			</div>
 		</div>
 	</div>
-	<div class="mt-5 mn-5"><p>.......</p></div>
-	<div class="mt-5 mn-5"><p>.......</p></div>
-	<div class="mt-5 mn-5"><p>.......</p></div>
-	<div class="mt-5 mn-5"><p>.......</p></div>
-	<div class="mt-5 mn-5"><p>.......</p></div>
+	<div class="row justify-content-center">
+		<img src="{{url_for('donation_visualization')}}" alt="Some Random Data">
+	</div>
+<!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
+<!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
+<!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
+<!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
+<!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
 
 	<div class="row justify-content-center">
 		<div class="col-6">

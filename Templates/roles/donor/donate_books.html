@@ -30,31 +30,44 @@
                 {{ form.hidden_tag() }}
                 <fieldset class="form-group">
                     <legend class="border-bottom mb-4">Please enter the book details you know</legend>
-                    <div class="form-group mb-5 mt-3">
+                    <div class="ml-2">
                         {{ form.book_name.label(class="form-control-label") }}
-                        {{ form.book_name(class="form-control form-control-lg") }}
                     </div>
-                    <div class="form-group mb-5">
-                        {{ form.author_name.label(class="form-control-label") }}
-                        {{ form.author_name(class="form-control form-control-lg") }}
+                    <div class="row justify-content-center">
+                        <div class="form-group mb-5 mt-3 col-10">
+                            {{ form.book_name(class="form-control form-control-lg") }}
+                        </div>
                     </div>
-                    <div class="form-group mb-5">
+                    <div class="ml-2">
                         {{ form.ISBN.label(class="form-control-label") }}
-                        {{ form.ISBN(class="form-control form-control-lg") }}
                     </div>
-                    <div class="form-group mb-3">
+                    <div class="row justify-content-center">
+                        <div class="form-group mb-5 mt-3 col-10">
+                            {{ form.ISBN(class="form-control form-control-lg") }}
+                        </div>
+                    </div><div class="ml-2">
+                        {{ form.author_name.label(class="form-control-label") }}
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="form-group mb-5 mt-3 col-10">
+                            {{ form.author_name(class="form-control form-control-lg") }}
+                        </div>
+                    </div><div class="ml-2">
                         {{ form.category.label(class="form-control-label") }}
-                        {{ form.category(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="form-group mb-5 mt-3 col-10">
+                            {{ form.category(class="form-control form-control-lg") }}
+                        </div>
                     </div>
                 </fieldset>
                 <div class="form-group row">
-                    <div class="col-6">
+                    <div class="col-6" align="center">
                         {{ form.submit(class="btn btn-outline-info") }}
                     </div>
-                    <div class="col-6">
+                    <div class="col-6" align="center">
                         <a class="btn btn-outline-info" type="button" href="{{ url_for('donor_page', username=username) }}"> Go Back</a>
                     </div>
-
                 </div>
             </form>
             </div>
