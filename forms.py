@@ -46,4 +46,9 @@ class DonationTemplate(FlaskForm):
     author_name = StringField('Author Name')
     category = StringField('Category')
     submit = SubmitField('Donate')
-    pass
+
+
+class AdminLoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')

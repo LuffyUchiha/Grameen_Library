@@ -99,7 +99,7 @@ def donor_donation_page(username):
         author_name = donation_form.author_name.data
         category = donation_form.category.data
 
-        #TODO push the values to the database
+        # TODO push the values to the database
         return redirect(url_for('donor_donation_page', username=username))
 
     return render_template('roles/donor/donate_books.html', form=donation_form, username=username)
@@ -121,6 +121,25 @@ def donation_visualization():
     fig.savefig(img)
     img.seek(0)
     return send_file(img, mimetype='image/png')
+
+
+# admin stuff
+
+@app.route("/admin", methods=['GET', 'POST'])
+def admin_login_page():
+    admin_form = AdminLoginForm()
+    if admin_form.validate_on_submit():
+        username = admin_form.username.data
+        password = admin_form.password.data
+        if password == 'pass':
+            return redirect(url_for('admin_page', username=username))
+
+    return render_template('roles/admin/admin_login_page.html', form=admin_form)
+
+
+@app.route("/admin/<username>")
+def admin_page(username):
+    return render_template('roles/admin/admin_page.html', username=username)
 
 
 @app.route("/registration/user")
