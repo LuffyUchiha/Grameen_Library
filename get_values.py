@@ -1,14 +1,11 @@
-from flask import *
 import time
 import psycopg2
-from flask_cors import CORS, cross_origin
-
-from UI import app
+from datetime import date
 
 
 def connect_Postgres(database, user, password, host="localhost"):
     try:
-        app.logger.info('Connecting to %s db @%s', database, host)
+        print('Connecting to %s db @%s', database, host)
         conn = psycopg2.connect(
             host=host,
             database=database,
@@ -16,25 +13,19 @@ def connect_Postgres(database, user, password, host="localhost"):
             password=password
         )
         cur = conn.cursor()
-        app.logger.info('PostgreSQL DB version:')
+        print('PostgreSQL DB version:')
         cur.execute('SELECT version()')
         db_version = cur.fetchone()
-        app.logger.info(db_version)
+        print(db_version)
         cur.close()
     except(Exception, psycopg2.DatabaseError) as error:
-        app.logger.info(error)
+        print(error)
         return None
     return conn
 
 
-
-def donate_book():
-    id = dict(request.form)['id']
-    book_title= dict(request.form)['book_title']
-    author_name= dict(request.form)['author_name']
-    ISBN=dict(request.form)['ISBN']
-    category=dict(request.form)['Category']
-    date=dict(request.form)['Date']
+def donate_book(book_id, book_title, author_name, ISBN, category):
+    print(book_id)
     conn = connect_Postgres(
         host="localhost",
         database="Grameen_Library",
@@ -43,49 +34,58 @@ def donate_book():
     )
     if conn is not None:
         cur = conn.cursor()
-        book_id=0
-        book_sql="""
-        SELECT book_id from grlib.book where isbn=%s
-        """
-        cur.execute(book_sql,(ISBN,))
-        res=cur.fetchall()
-        if res is None:
-            book_ins_sql="""
-            INSERT INTO grlib.BOOK (Donor_ID,Donate_Date,ISBN)
-            VALUES (%s,%s,%s) RETURNING book_ID
+        book_dtl_id = 0
+        donate_date = str(date.today())
+        print(donate_date)
+        if len(ISBN)==0:
+            book_sql = """
+            SELECT \"ISBN\" from grlib.book_details where UPPER(\"book_title\") = UPPER(%s)
             """
-            cur.execute(book_ins_sql,(id,date,ISBN,))
-            book_id=cur.fetchall()[0][0]
-        else:
-            book_id=res[0][0]
-        book_check_sql="""
-        SELECT no_of_copies_actual, no_of_copies_current from grlib.BOOK b left join grlib.book_details bd on b.ISBN=bd.\"ISBN\" where b.ISBN=%s and book_id=%d
+            cur.execute(book_sql, (book_title,))
+            if cur.fetchone() is None:
+                ISBN = "UNSORTED"
+            else:
+                ISBN = cur.fetchone()
+        book_ins_sql = """
+        INSERT INTO grlib.BOOK (Donor_ID,Donate_Date,ISBN,Book_Name)
+        VALUES (%s,%s,%s,%s) RETURNING book_id
         """
-        cur.execute(book_check_sql,(ISBN,book_id,))
-        res=cur.fetchall()[0]
-        (actual_copies, current_copies) = (res[0], res[1])
-        if actual_copies is not None:
-            actual_copies+=1
-            current_copies+=1
-            book_update_sql="""
-            UPDATE grlib.BOOK_DETAIL set no_of_copies_actual=%d, no_of_copies_current=%d where book_id=%d 
+        print(book_ins_sql, (book_id, donate_date, ISBN, book_title,))
+        cur.execute(book_ins_sql, (book_id, donate_date, ISBN, book_title,))
+        book_dtl_id = cur.fetchone()
+        if ISBN != "UNSORTED":
+            book_check_sql = """
+            SELECT no_of_copies_actual, no_of_copies_current from grlib.BOOK b right join grlib.book_details bd on b.ISBN=bd.\"ISBN\" where bd.\"ISBN\"=%s
             """
-            cur.execute(book_update_sql,(actual_copies,current_copies,book_id,))
-        else:
-            book_detail_ins_sql = """
-                    INSERT INTO grlib.BOOK_DETAIL (Book_ID,Book_Title,ISBN,Author_Name,Category,no_of_copies_actual,no_of_copies_current)
-            VALUES (%s,%s,%s,%s,%s,%d,%d)
-                    """
-            cur.execute(book_ins_sql, (book_id,book_title,ISBN,author_name,category,1,1,))
+            print(book_check_sql, (ISBN,))
+            cur.execute(book_check_sql, (ISBN,))
+            res = cur.fetchone()
+            print(res)
+            if res is not None:
+                (actual_copies, current_copies) = (res[0], res[1])
+                actual_copies += 1
+                current_copies += 1
+                book_update_sql = """
+                UPDATE grlib.BOOK_DETAIL set no_of_copies_actual=%d, no_of_copies_current=%d where ISBN
+                """
+                cur.execute(book_update_sql, (actual_copies, current_copies, book_id,))
+            else:
+                book_detail_ins_sql = """
+                        INSERT INTO grlib.BOOK_DETAILS (Book_Title,\"ISBN\",Author_Name,no_of_copies_actual,no_of_copies_current)
+                VALUES (%s,%s,%s,%s,%s)
+                        """
+                print(book_detail_ins_sql, (book_title, ISBN, author_name,  1, 1,))
+                cur.execute(book_detail_ins_sql, (book_title, ISBN, author_name, 1, 1,))
         cur.close()
+        conn.commit()
         conn.close()
-        print(book_id)
-        return jsonify({"Num": book_id})
+        print(book_dtl_id)
+        return book_dtl_id
+    else:
+        return -1
 
 
-#TODO name change
-def get_book_num():
-    id = dict(request.form)['user_id']
+def get_book_num(id):
     conn = connect_Postgres(
         host="localhost",
         database="Grameen_Library",
@@ -99,15 +99,15 @@ def get_book_num():
             """
         cur.execute(book_num_sql, (id,))
         res = cur.fetchall()
-        num=res[0][0]
-        date_list=[]
+        num = res[0][0]
+        date_list = []
         for i in res:
             date_list.append(i[0][1])
         cur.close()
+        conn.commit()
         conn.close()
         print(num)
-        return jsonify({"Num": num,"Donate Dates":date_list})
-
+        return num
 
 
 def get_Panchayats():
@@ -125,31 +125,24 @@ def get_Panchayats():
         cur.execute(panchayat_list_sql)
         panch_list = cur.fetchall()
         cur.close()
+        conn.commit()
         conn.close()
         print([{"Village_Name": i[0]} for i in panch_list])
-        s = jsonify([{"Village_Name": i[0]} for i in panch_list])
+        s = [{"Village_Name": i[0]} for i in panch_list]
         return s
 
 
-
-def vol_response():
-    name = dict(request.form)['name']
-    pmi_id = dict(request.form)['pmi_id']
-    is_pmi_member = dict(request.form)['pmi_pcc_member']
+def vol_response(name, pmi_id, is_pmi_member):
     # Is there another table for extracting mobile number and other details with just the pml id and logic for this
     # part depends on that
     res = time.ctime()
-    return jsonify({"response": res})
+    return res
 
 
-
-def don_response():
-    name = dict(request.form)['Name'].split(maxsplit=1)
+def don_response(name, email, phone, password):
+    name = name.split(maxsplit=1)
     if len(name) == 1:
         name.append("")
-    email = dict(request.form)['Email']
-    phone = dict(request.form)['Phone']
-    password = dict(request.form)['Password']
     conn = connect_Postgres(
         host="localhost",
         database="Grameen_Library",
@@ -178,22 +171,17 @@ def don_response():
         res = 0
         donor_id = -1
         user_id = -1
-    return jsonify({"User ID": user_id, "Name": name[0], "response": res})
+    return {"User ID": user_id, "Name": name[0], "response": res}
 
 
-
-def user_response():
-    name = dict(request.form)['Name'].split(maxsplit=1)
+def user_response(name, panchayat, email, phone, password):
+    name = name.split(maxsplit=1)
     if len(name) == 1:
         name.append("")
-    panchayat = dict(request.form)['Panchayat']
     # student = dict(request.form)['Student']
-    email = dict(request.form)['Email']
-    phone = dict(request.form)['Phone']
     # address = dict(request.form)['Address']
     # id_proof = dict(request.form)['ID_proof']
     # location_proof = dict(request.form)['Location_proof']
-    password = dict(request.form)['Password']
     conn = connect_Postgres(
         host="localhost",
         database="Grameen_Library",
@@ -226,19 +214,13 @@ def user_response():
     else:
         res = 0
         user_id = -1
-    return jsonify({"User ID": user_id, "response": res})
+    return user_id
 
 
-
-def pan_response():
-    name = dict(request.form)['PoC Name'].split(maxsplit=1)
+def pan_response(name, panchayat_name, email, phone, address, password):
+    name = name.split(maxsplit=1)
     if len(name) == 1:
         name.append("")
-    panchayat_name = dict(request.form)['Panchayat Name']
-    email = dict(request.form)['Email']
-    phone = dict(request.form)['Phone']
-    address = dict(request.form)['Address']
-    password = dict(request.form)['Password']
     conn = connect_Postgres(
         host="localhost",
         database="Grameen_Library",
@@ -267,13 +249,10 @@ def pan_response():
     else:
         res = 0
         user_id = -1
-    return jsonify({"User ID": user_id, "Name": name[0], "response": res})
+    return {"User ID": user_id, "Name": name[0], "response": res}
 
 
-def login_response():
-    print(dict(request.form))
-    user_id = dict(request.form)['user_id']
-    password = dict(request.form)['password']
+def login_response(user_id, password):
     # Is there another table for extracting mobile number and other details with just the pml id and logic for this
     # part depends on that
     conn = connect_Postgres(
@@ -284,25 +263,20 @@ def login_response():
     )
     if conn is not None:
         cur = conn.cursor()
-        user_check_sql = "select user_first_name,user_last_name,role_name from grlib.USER a join grlib.role b on a.role_id=b.role_id where user_id= %s and password= %s"
+        print(user_id)
+        if len(user_id)>=10:
+            user_check_sql = "select user_id,user_first_name,user_last_name,role_name from grlib.USER a join grlib.role b on a.role_id=b.role_id where user_mobile=%s and password= %s"
+        else:
+            user_check_sql = "select user_id,user_first_name,user_last_name,role_name from grlib.USER a join grlib.role b on a.role_id=b.role_id where user_id= %s and password= %s"
+
         cur.execute(user_check_sql, (user_id, password,))
         user = cur.fetchone()
+        cur.close()
+        conn.close()
         print(user)
         if user is not None:
-            # the session can't be modified as it's signed,
-            # so it's a safe place to store the user
-            session['user_id'] = user_id
-            cur.close()
-            conn.close()
-            return jsonify({"Response": 1, "Name": user[0] + " " + user[1], "Role": user[2]})
+            return {"Response": True, "Name": user[1] + " " + user[2], "Role": user[3],"ID":user[0]}
         else:
-            cur.close()
-            conn.close()
-            return jsonify({"Response": 0})
-    res = time.ctime()
-    return jsonify({"Response": -1})
-
-
-# app.add_url_rule('/','home',home)
-if __name__ == "__main__":
-    app.run(host="127.0.0.1", debug=True)
+            return {"Response": False}
+    else:
+        return {"Response": False}

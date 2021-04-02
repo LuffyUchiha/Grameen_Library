@@ -5,6 +5,7 @@ from flask import *
 from flask_cors import CORS, cross_origin
 import pandas as pd
 from forms import *
+from get_values import *
 
 plt.style.use('ggplot')
 
@@ -41,9 +42,9 @@ def landing_page():
         password = login_form.password.data
 
         print('username: {}\npassword: {}'.format(username, password))
-        # TODO validate the with a query
-        if login_form.password.data == "pass":
-            return redirect(url_for('donor_page', username=username))
+        res= login_response(username, password)
+        if res['Response']:
+            return redirect(url_for('donor_page', username=res['ID']))
         else:
             flash(message='Incorrect credentials, please try again', category='danger')
     return render_template('landing_page.html', form=login_form)
@@ -80,12 +81,14 @@ def donor_registration_page():
         password = donor_form.password.data
         email = donor_form.email.data
         phone = donor_form.phone_number.data
-        pmi_member = donor_form.pmi_member.data
 
-        print(username, password, email, phone, pmi_member)
-
-        # TODO store the above details if valid. redirect to a different page is invalid
-        return redirect(url_for('donor_page', username=username))
+        print(username, password, email, phone)
+        res=don_response(username, email, phone, password)
+        if res['response'] == 1:
+            return redirect(url_for('donor_page', username=res['User ID']))
+        else:
+            # TODO  redirect Error Page
+            pass
 
     return render_template('roles/registrations/donor_registration.html', form=donor_form)
 
@@ -98,9 +101,11 @@ def donor_donation_page(username):
         ISBN = donation_form.ISBN.data
         author_name = donation_form.author_name.data
         category = donation_form.category.data
-
-        # TODO push the values to the database
-        return redirect(url_for('donor_donation_page', username=username))
+        if donate_book(username, book_name, author_name, ISBN, category) == -1:
+            # TODO  redirect Error Page
+            pass
+        else:
+            return redirect(url_for('donor_donation_page', username=username))
 
     return render_template('roles/donor/donate_books.html', form=donation_form, username=username)
 
@@ -145,14 +150,16 @@ def admin_page(username):
 @app.route("/registration/user")
 def user_registration_page():
     user_form = UserRegistrationForm()
-
+    #TODO include
+    #user_response(name, panchayat, email, phone, password)
     return render_template('roles/registrations/user_registration.html', form=user_form)
 
 
 @app.route("/registration/panchayat")
 def panchayat_registration_page():
     panchayat_form = PanchayatRegistrationForm()
-
+    # TODO include
+    #pan_response(name, panchayat_name, email, phone, address, password)
     return render_template('roles/registrations/panchayat_registration.html', form=panchayat_form)
 
 
