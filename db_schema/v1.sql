@@ -1,3 +1,31 @@
+-- Table: grlib.book
+
+-- DROP TABLE grlib.book;
+
+CREATE TABLE grlib.book
+(
+    book_id integer NOT NULL DEFAULT nextval('grlib.book_book_id_seq'::regclass),
+    donor_id integer,
+    donate_date date,
+    isbn character(13) COLLATE pg_catalog."default",
+    book_name character varying(50) COLLATE pg_catalog."default"
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE grlib.book
+    OWNER to postgres;
+
+GRANT ALL ON TABLE grlib.book TO grlib;
+
+GRANT ALL ON TABLE grlib.book TO postgres;
+
+
+
+-- Table: grlib.book_category
+
+-- DROP TABLE grlib.book_category;
+
 CREATE TABLE grlib.book_category
 (
     category_id integer NOT NULL,
@@ -15,8 +43,37 @@ GRANT ALL ON TABLE grlib.book_category TO grlib;
 GRANT ALL ON TABLE grlib.book_category TO postgres;
 
 
+-- Table: grlib.book_details
+
+-- DROP TABLE grlib.book_details;
+
+CREATE TABLE grlib.book_details
+(
+    book_title text COLLATE pg_catalog."default",
+    author_name text COLLATE pg_catalog."default",
+    publisher_name text COLLATE pg_catalog."default",
+    publication_year character(4) COLLATE pg_catalog."default",
+    book_language character varying(20) COLLATE pg_catalog."default",
+    no_of_copies_actual integer,
+    no_of_copies_current integer,
+    ISBN character(13) COLLATE pg_catalog."default" NOT NULL,
+    category_id integer,
+    CONSTRAINT isbn PRIMARY KEY (ISBN)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE grlib.book_details
+    OWNER to postgres;
+
+GRANT ALL ON TABLE grlib.book_details TO grlib;
+
+GRANT ALL ON TABLE grlib.book_details TO postgres;
 
 
+-- Table: grlib.book_distribution
+
+-- DROP TABLE grlib.book_distribution;
 
 CREATE TABLE grlib.book_distribution
 (
@@ -41,31 +98,11 @@ GRANT ALL ON TABLE grlib.book_distribution TO grlib;
 
 GRANT ALL ON TABLE grlib.book_distribution TO postgres;
 
-CREATE TABLE grlib.books
-(
-    donor_id integer NOT NULL,
-    book_title text COLLATE pg_catalog."default" NOT NULL,
-    author_name text COLLATE pg_catalog."default",
-    publisher_name text COLLATE pg_catalog."default",
-    publication_year character(4) COLLATE pg_catalog."default",
-    book_language character varying(20) COLLATE pg_catalog."default",
-    no_of_copies_actual integer,
-    no_of_copies_current integer,
-    donor_details text COLLATE pg_catalog."default",
-    book_id integer NOT NULL,
-    category_id integer NOT NULL,
-    CONSTRAINT books_pkey PRIMARY KEY (book_id)
-)
 
-TABLESPACE pg_default;
 
-ALTER TABLE grlib.books
-    OWNER to postgres;
+-- Table: grlib.borrower
 
-GRANT ALL ON TABLE grlib.books TO grlib;
-
-GRANT ALL ON TABLE grlib.books TO postgres;
-
+-- DROP TABLE grlib.borrower;
 
 CREATE TABLE grlib.borrower
 (
@@ -90,6 +127,10 @@ GRANT ALL ON TABLE grlib.borrower TO grlib;
 
 GRANT ALL ON TABLE grlib.borrower TO postgres;
 
+-- Table: grlib.borrower_profile
+
+-- DROP TABLE grlib.borrower_profile;
+
 CREATE TABLE grlib.borrower_profile
 (
     borrower_id integer NOT NULL,
@@ -109,6 +150,11 @@ GRANT ALL ON TABLE grlib.borrower_profile TO grlib;
 
 GRANT ALL ON TABLE grlib.borrower_profile TO postgres;
 
+
+-- Table: grlib.donor
+
+-- DROP TABLE grlib.donor;
+
 CREATE TABLE grlib.donor
 (
     donor_id integer NOT NULL,
@@ -117,6 +163,7 @@ CREATE TABLE grlib.donor
     donor_mobile character(10) COLLATE pg_catalog."default",
     no_of_books_donated integer NOT NULL DEFAULT 0,
     donor_email character varying(50) COLLATE pg_catalog."default",
+    is_pmi_member boolean,
     CONSTRAINT donor_pkey PRIMARY KEY (donor_id)
 )
 
@@ -129,8 +176,9 @@ GRANT ALL ON TABLE grlib.donor TO grlib;
 
 GRANT ALL ON TABLE grlib.donor TO postgres;
 
+-- Table: grlib.role
 
-
+-- DROP TABLE grlib.role;
 
 CREATE TABLE grlib.role
 (
@@ -148,9 +196,9 @@ GRANT ALL ON TABLE grlib.role TO grlib;
 
 GRANT ALL ON TABLE grlib.role TO postgres;
 
+-- Table: grlib.user
 
-
-
+-- DROP TABLE grlib."user";
 
 CREATE TABLE grlib."user"
 (
@@ -173,6 +221,10 @@ GRANT ALL ON TABLE grlib."user" TO grlib;
 GRANT ALL ON TABLE grlib."user" TO postgres;
 
 
+-- Table: grlib.village
+
+-- DROP TABLE grlib.village;
+
 CREATE TABLE grlib.village
 (
     village_id integer NOT NULL,
@@ -181,7 +233,7 @@ CREATE TABLE grlib.village
     village_address text COLLATE pg_catalog."default" NOT NULL,
     village_contact_name text COLLATE pg_catalog."default",
     village_contact_mobile character(10) COLLATE pg_catalog."default",
-    "Village_Contact_Email" character varying(50) COLLATE pg_catalog."default",
+    Village_Contact_Email character varying(50) COLLATE pg_catalog."default",
     CONSTRAINT village_pkey PRIMARY KEY (village_id)
 )
 
@@ -195,7 +247,79 @@ GRANT ALL ON TABLE grlib.village TO grlib;
 GRANT ALL ON TABLE grlib.village TO postgres;
 
 
+-- SEQUENCE: grlib.book_book_id_seq
+
+-- DROP SEQUENCE grlib.book_book_id_seq;
+
+CREATE SEQUENCE grlib.book_book_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE grlib.book_book_id_seq
+    OWNER TO postgres;
+
+GRANT USAGE ON SEQUENCE grlib.book_book_id_seq TO grlib;
+
+GRANT ALL ON SEQUENCE grlib.book_book_id_seq TO postgres;
 
 
+-- SEQUENCE: grlib.donor_donor_id_seq
+
+-- DROP SEQUENCE grlib.donor_donor_id_seq;
+
+CREATE SEQUENCE grlib.donor_donor_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE grlib.donor_donor_id_seq
+    OWNER TO postgres;
+
+GRANT USAGE ON SEQUENCE grlib.donor_donor_id_seq TO grlib;
+
+GRANT ALL ON SEQUENCE grlib.donor_donor_id_seq TO postgres;
+
+
+-- SEQUENCE: grlib.user_user_id_seq
+
+-- DROP SEQUENCE grlib.user_user_id_seq;
+
+CREATE SEQUENCE grlib.user_user_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE grlib.user_user_id_seq
+    OWNER TO postgres;
+
+GRANT ALL ON SEQUENCE grlib.user_user_id_seq TO grlib;
+
+GRANT ALL ON SEQUENCE grlib.user_user_id_seq TO postgres;
+
+
+-- SEQUENCE: grlib.village_villager_id_seq
+
+-- DROP SEQUENCE grlib.village_villager_id_seq;
+
+CREATE SEQUENCE grlib.village_villager_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE grlib.village_villager_id_seq
+    OWNER TO postgres;
+
+GRANT USAGE ON SEQUENCE grlib.village_villager_id_seq TO grlib;
+
+GRANT ALL ON SEQUENCE grlib.village_villager_id_seq TO postgres;
 
 

@@ -39,7 +39,7 @@ def donate_book(book_id, book_title, author_name, ISBN, category):
         print(donate_date)
         if len(ISBN)==0:
             book_sql = """
-            SELECT \"ISBN\" from grlib.book_details where UPPER(\"book_title\") = UPPER(%s)
+            SELECT ISBN from grlib.book_details where UPPER(book_title) = UPPER(%s)
             """
             cur.execute(book_sql, (book_title,))
             if cur.fetchone() is None:
@@ -55,7 +55,7 @@ def donate_book(book_id, book_title, author_name, ISBN, category):
         book_dtl_id = cur.fetchone()
         if ISBN != "UNSORTED":
             book_check_sql = """
-            SELECT no_of_copies_actual, no_of_copies_current from grlib.BOOK b right join grlib.book_details bd on b.ISBN=bd.\"ISBN\" where bd.\"ISBN\"=%s
+            SELECT no_of_copies_actual, no_of_copies_current from grlib.BOOK b right join grlib.book_details bd on b.ISBN=bd.ISBN where bd.ISBN=%s
             """
             print(book_check_sql, (ISBN,))
             cur.execute(book_check_sql, (ISBN,))
@@ -71,7 +71,7 @@ def donate_book(book_id, book_title, author_name, ISBN, category):
                 cur.execute(book_update_sql, (actual_copies, current_copies, book_id,))
             else:
                 book_detail_ins_sql = """
-                        INSERT INTO grlib.BOOK_DETAILS (Book_Title,\"ISBN\",Author_Name,no_of_copies_actual,no_of_copies_current)
+                        INSERT INTO grlib.BOOK_DETAILS (Book_Title,ISBN,Author_Name,no_of_copies_actual,no_of_copies_current)
                 VALUES (%s,%s,%s,%s,%s)
                         """
                 print(book_detail_ins_sql, (book_title, ISBN, author_name,  1, 1,))
@@ -230,7 +230,7 @@ def pan_response(name, panchayat_name, email, phone, address, password):
     if conn is not None:
         cur = conn.cursor()
         panchayat_insert_sql = """
-                INSERT INTO grlib.Village (Village_id,Village_Name, Panchayat_Name, Village_Address, Village_Contact_Name, Village_Contact_Mobile, \"Village_Contact_Email\")
+                INSERT INTO grlib.Village (Village_id,Village_Name, Panchayat_Name, Village_Address, Village_Contact_Name, Village_Contact_Mobile, Village_Contact_Email)
                 VALUES (%s,%s,%s,%s,%s,%s,%s);
                 """
         # Assuming Village and Panchayat names are same for now
