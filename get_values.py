@@ -5,7 +5,7 @@ from datetime import date
 
 def connect_Postgres(database, user, password, host="localhost"):
     try:
-        print('Connecting to %s db @%s', database, host)
+        print('Connecting to %{} db @{}'.format(database, host))
         conn = psycopg2.connect(
             host=host,
             database=database,
@@ -30,14 +30,14 @@ def donate_book(book_id, book_title, author_name, ISBN, category):
         host="localhost",
         database="Grameen_Library",
         user="grlib",
-        password="password"
+        password="pass"
     )
     if conn is not None:
         cur = conn.cursor()
         book_dtl_id = 0
         donate_date = str(date.today())
         print(donate_date)
-        if len(ISBN)==0:
+        if len(ISBN) == 0:
             book_sql = """
             SELECT ISBN from grlib.book_details where UPPER(book_title) = UPPER(%s)
             """
@@ -74,7 +74,7 @@ def donate_book(book_id, book_title, author_name, ISBN, category):
                         INSERT INTO grlib.BOOK_DETAILS (Book_Title,ISBN,Author_Name,no_of_copies_actual,no_of_copies_current)
                 VALUES (%s,%s,%s,%s,%s)
                         """
-                print(book_detail_ins_sql, (book_title, ISBN, author_name,  1, 1,))
+                print(book_detail_ins_sql, (book_title, ISBN, author_name, 1, 1,))
                 cur.execute(book_detail_ins_sql, (book_title, ISBN, author_name, 1, 1,))
         cur.close()
         conn.commit()
@@ -145,9 +145,9 @@ def don_response(name, email, phone, password):
         name.append("")
     conn = connect_Postgres(
         host="localhost",
-        database="Grameen_Library",
+        database="postgres",
         user="grlib",
-        password="password"
+        password="pass"
     )
     if conn is not None:
         cur = conn.cursor()
@@ -257,25 +257,28 @@ def login_response(user_id, password):
     # part depends on that
     conn = connect_Postgres(
         host="localhost",
-        database="Grameen_Library",
+        database="postgres",
         user="grlib",
-        password="password"
+        password="pass"
     )
     if conn is not None:
         cur = conn.cursor()
-        print(user_id)
-        if len(user_id)>=10:
-            user_check_sql = "select user_id,user_first_name,user_last_name,role_name from grlib.USER a join grlib.role b on a.role_id=b.role_id where user_mobile=%s and password= %s"
+        print("user_id -- ", user_id)
+        if len(user_id) >= 10:
+            user_check_sql = "select user_id,user_first_name,user_last_name,role_name" \
+                             " from grlib.USER a join grlib.role b on a.role_id=b.role_id" \
+                             " where user_mobile=%s and password= %s"
         else:
-            user_check_sql = "select user_id,user_first_name,user_last_name,role_name from grlib.USER a join grlib.role b on a.role_id=b.role_id where user_id= %s and password= %s"
-
+            user_check_sql = "select user_id,user_first_name,user_last_name,role_name" \
+                             " from grlib.USER a join grlib.role b on a.role_id=b.role_id" \
+                             " where user_id= %s and password= %s"
         cur.execute(user_check_sql, (user_id, password,))
         user = cur.fetchone()
         cur.close()
         conn.close()
         print(user)
         if user is not None:
-            return {"Response": True, "Name": user[1] + " " + user[2], "Role": user[3],"ID":user[0]}
+            return {"Response": True, "Name": user[1] + " " + user[2], "Role": user[3], "ID": user[0]}
         else:
             return {"Response": False}
     else:
