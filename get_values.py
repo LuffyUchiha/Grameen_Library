@@ -28,7 +28,7 @@ def donate_book(book_id, book_title, author_name, ISBN, category):
     print(book_id)
     conn = connect_Postgres(
         host="localhost",
-        database="Grameen_Library",
+        database="postgres",
         user="grlib",
         password="pass"
     )
@@ -88,7 +88,7 @@ def donate_book(book_id, book_title, author_name, ISBN, category):
 def get_book_num(id):
     conn = connect_Postgres(
         host="localhost",
-        database="Grameen_Library",
+        database="postgres",
         user="grlib",
         password="password"
     )
@@ -113,7 +113,7 @@ def get_book_num(id):
 def get_Panchayats():
     conn = connect_Postgres(
         host="localhost",
-        database="Grameen_Library",
+        database="postgres",
         user="grlib",
         password="password"
     )

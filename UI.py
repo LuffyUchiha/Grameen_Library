@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from flask import *
 from flask_cors import CORS, cross_origin
 import pandas as pd
+import numpy as np
 from forms import *
 from get_values import *
 
@@ -102,7 +103,6 @@ def donor_donation_page(username):
         author_name = donation_form.author_name.data
         category = donation_form.category.data
         if donate_book(username, book_name, author_name, ISBN, category) == -1:
-            # TODO  redirect Error Page
             pass
         else:
             return redirect(url_for('donor_donation_page', username=username))
@@ -114,11 +114,11 @@ def donor_donation_page(username):
 def donation_visualization():
     fig, ax = plt.subplots()
     canvas = FigureCanvas(fig)
-    x = pd.DataFrame([1, 2, 3, 4])
-    y1 = pd.DataFrame([2, 3, 4, 5])
-    y2 = pd.DataFrame([5, 2, 4, 2])
-    plt.plot(x, y1, color='blue')
-    plt.plot(x, y2, color='red')
+    x = np.arange(5)
+    y1 = np.random.randint(1, 10)
+    y2 = np.random.randint(1, 10)
+    plt.plot(x, y1)
+    plt.plot(x, y2)
     plt.xlabel('Dates')
     plt.ylabel('Number of Books')
     plt.title('Distribution of books donated')
@@ -127,6 +127,11 @@ def donation_visualization():
     img.seek(0)
     return send_file(img, mimetype='image/png')
 
+
+@app.route('/donor/<username>/donor_stats')
+def donor_stats(username):
+    #TODO get me the books donated by "username"(which is currently donor_id, will change later) as a json
+    return render_template('roles/donor/book_usage_statistics.html')
 
 # admin stuff
 

@@ -29,7 +29,9 @@
                 <form method="post" action="">
                 {{ form.hidden_tag() }}
                 <fieldset class="form-group">
-                    <legend class="border-bottom mb-4">Please enter the book details you know</legend>
+                    <legend class="border-bottom mb-4">
+                        <div class="mt-2 ml-2 mb-2">Please enter the book details you know</div>
+                    </legend>
                     <div class="ml-2">
                         {{ form.book_name.label(class="form-control-label") }}
                     </div>
@@ -63,12 +65,13 @@
                 </fieldset>
                 <div class="form-group row">
                     <div class="col-6" align="center">
-                        {{ form.submit(class="btn btn-outline-info") }}
+                        <a class="btn btn-lg btn-outline-info" type="button" href="{{ url_for('donor_page', username=username) }}"> Go Back</a>
                     </div>
                     <div class="col-6" align="center">
-                        <a class="btn btn-outline-info" type="button" href="{{ url_for('donor_page', username=username) }}"> Go Back</a>
+                        {{ form.submit(class="btn btn-lg btn-outline-info") }}
                     </div>
                 </div>
+
             </form>
             </div>
         </div>
