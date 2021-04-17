@@ -7,6 +7,8 @@ import pandas as pd
 import numpy as np
 from forms import *
 from get_values import *
+from time import sleep
+import requests
 
 plt.style.use('ggplot')
 
@@ -43,7 +45,7 @@ def landing_page():
         password = login_form.password.data
 
         print('username: {}\npassword: {}'.format(username, password))
-        res= login_response(username, password)
+        res = login_response(username, password)
         if res['Response']:
             return redirect(url_for('donor_page', username=res['ID']))
         else:
@@ -84,7 +86,7 @@ def donor_registration_page():
         phone = donor_form.phone_number.data
 
         print(username, password, email, phone)
-        res=don_response(username, email, phone, password)
+        res = don_response(username, email, phone, password)
         if res['response'] == 1:
             return redirect(url_for('donor_page', username=res['User ID']))
         else:
@@ -102,12 +104,46 @@ def donor_donation_page(username):
         ISBN = donation_form.ISBN.data
         author_name = donation_form.author_name.data
         category = donation_form.category.data
-        if donate_book(username, book_name, author_name, ISBN, category) == -1:
-            pass
-        else:
-            return redirect(url_for('donor_donation_page', username=username))
+
+        req = {
+            "username": username,
+            "book_name": book_name,
+            "ISBN": ISBN,
+            "author_name": author_name,
+            "category": category
+        }
+
+        resp = requests.post(url="http://localhost:5000/donor/donor_donation"
+                                 "?username={}&book_name={}&ISBN={}&author_name={}&category={}"
+                             .format(username, book_name, ISBN, author_name, category))
+        print(resp.raw)
+        print(resp.request)
+        print(str(resp.content).split("'")[1])
+        if str(resp.content).split("'")[1] == "Success":
+            flash("Book Donated Successfully", "success")
+            donation_form.book_name.data = ""
+            donation_form.ISBN.data = ""
+            donation_form.author_name.data = ""
+            donation_form.category.data = ""
+        elif str(resp.content).split("'")[1] == "Failure":
+            flash("Donation Failed. Please contact the Volunteer", "danger")
 
     return render_template('roles/donor/donate_books.html', form=donation_form, username=username)
+
+
+@app.route("/donor/donor_donation", methods=['POST'])
+def donor_donation_post_page():
+    req = request.args
+    username = req.get("username")
+    book_name = req.get("book_name")
+    author_name = req.get("author_name")
+    ISBN = req.get("ISBN")
+    category = req.get("category")
+    if donate_book(username, book_name, author_name, ISBN, category) == -1:
+        return "Failure"
+    else:
+        print("success")
+        return "Success"
 
 
 @app.route('/donation_visualization/')
@@ -115,8 +151,8 @@ def donation_visualization():
     fig, ax = plt.subplots()
     canvas = FigureCanvas(fig)
     x = np.arange(5)
-    y1 = np.random.randint(1, 10)
-    y2 = np.random.randint(1, 10)
+    y1 = np.random.randint(low=1, high=10, size=5)
+    y2 = np.random.randint(low=1, high=10, size=5)
     plt.plot(x, y1)
     plt.plot(x, y2)
     plt.xlabel('Dates')
@@ -130,6 +166,8 @@ def donation_visualization():
 
 @app.route('/donor/<username>/donor_stats')
 def donor_stats(username):
+    # TODO get me the books donated by "username"(which is currently donor_id, will change later) as a json
+
     (donate_book_count,book_details)=get_donate_book_details(username) #This function returns the number of books a donor has donated and a list of books as dictionaries
     #book_details["Book ID"],book_details["Book Name"],book_details["Donate Date"],book_details["isIdentified"] is to find whether ISBN for the book is identified to add to book_details page or not
     for books in book_details:#The list is ordered by donate_date so the oldest donated book comes first. To reverse the order, in book_num_sql in line 98 get_values.py append desc to the query
@@ -137,8 +175,8 @@ def donor_stats(username):
         book_name=books["Book Name"]
         donate_date=books["Donate Date"]
         isIdentified=books["isIdentified"]
-
     return render_template('roles/donor/book_usage_statistics.html')
+
 
 # admin stuff
 
@@ -162,8 +200,8 @@ def admin_page(username):
 @app.route("/registration/user")
 def user_registration_page():
     user_form = UserRegistrationForm()
-    #TODO include
-    #user_response(name, panchayat, email, phone, password)
+    # TODO include
+    # user_response(name, panchayat, email, phone, password)
     return render_template('roles/registrations/user_registration.html', form=user_form)
 
 
@@ -171,7 +209,7 @@ def user_registration_page():
 def panchayat_registration_page():
     panchayat_form = PanchayatRegistrationForm()
     # TODO include
-    #pan_response(name, panchayat_name, email, phone, address, password)
+    # pan_response(name, panchayat_name, email, phone, address, password)
     return render_template('roles/registrations/panchayat_registration.html', form=panchayat_form)
 
 

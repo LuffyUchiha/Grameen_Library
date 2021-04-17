@@ -41,7 +41,7 @@ class DonorDonateForm(FlaskForm):
 
 
 class DonationTemplate(FlaskForm):
-    book_name = StringField('Book Name')
+    book_name = StringField('Book Name', validators=[DataRequired()])
     ISBN = StringField('ISBN')
     author_name = StringField('Author Name')
     category = StringField('Category')
