@@ -5,7 +5,7 @@ from datetime import date
 
 def connect_Postgres(database, user, password, host="localhost"):
     try:
-        print('Connecting to %{} db @{}'.format(database, host))
+        print('Connecting to {} db @{}'.format(database, host))
         conn = psycopg2.connect(
             host=host,
             database=database,
@@ -263,7 +263,6 @@ def login_response(user_id, password):
     )
     if conn is not None:
         cur = conn.cursor()
-        print("user_id -- ", user_id)
         if len(user_id) >= 10:
             user_check_sql = "select user_id,user_first_name,user_last_name,role_name" \
                              " from grlib.USER a join grlib.role b on a.role_id=b.role_id" \
@@ -283,3 +282,30 @@ def login_response(user_id, password):
             return {"Response": False}
     else:
         return {"Response": False}
+
+def admin_login_response(user_id, password):
+    conn = connect_Postgres(
+        host="localhost",
+        database="postgres",
+        user="grlib",
+        password="pass"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        admin_check_sql = "select admin_id, admin_name, admin_roles " \
+                          "from grlib.ADMIN " \
+                          "where (admin_id=%s or admin_name=%s) and password=%s"
+        cur.execute(admin_check_sql, (
+            -1 if type(user_id) == str else user_id,
+            '' if type(user_id) == int else user_id,
+            password,
+        ))
+        admin = cur.fetchone()
+        cur.close()
+        conn.close()
+        if admin is not None:
+            return {"Response": True, "Name": admin[1], "Roles": admin[2]}
+        else:
+            return {"Response": False}
+
+print(admin_login_response(3, 'pass'))
