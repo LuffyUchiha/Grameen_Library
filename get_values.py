@@ -85,7 +85,7 @@ def donate_book(book_id, book_title, author_name, ISBN, category):
         return -1
 
 
-def get_book_num(id):
+def get_donate_book_details(id):
     conn = connect_Postgres(
         host="localhost",
         database="postgres",
@@ -95,19 +95,22 @@ def get_book_num(id):
     if conn is not None:
         cur = conn.cursor()
         book_num_sql = """
-            SELECT d.no_of_books_donated,b.donate_date from grlib.donor d join grlib.book b on d.donor_id=b.donor_id where d.donor_id=%s order by donate_date
+            SELECT d.no_of_books_donated,b.donate_date,b.book_id,b.ISBN,b.book_name from grlib.donor d join grlib.book b on d.donor_id=b.donor_id where d.donor_id=%s order by donate_date
             """
         cur.execute(book_num_sql, (id,))
         res = cur.fetchall()
         num = res[0][0]
-        date_list = []
+        detail_list = []
         for i in res:
-            date_list.append(i[0][1])
+        	isIdentified=True
+        	if i[3] == "UNSORTED":
+        		isIdentified=False
+            detail_list.append(dict({"Book ID":i[2],"Book Name":i[4],"Donate Date":i[1],"isIdentified":isIdentified}))
         cur.close()
         conn.commit()
         conn.close()
-        print(num)
-        return num
+        print(num,detail_list)
+        return (num,detail_list)
 
 
 def get_Panchayats():
