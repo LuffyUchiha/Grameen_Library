@@ -167,6 +167,14 @@ def donation_visualization():
 @app.route('/donor/<username>/donor_stats')
 def donor_stats(username):
     # TODO get me the books donated by "username"(which is currently donor_id, will change later) as a json
+
+    (donate_book_count,book_details)=get_donate_book_details(username) #This function returns the number of books a donor has donated and a list of books as dictionaries
+    #book_details["Book ID"],book_details["Book Name"],book_details["Donate Date"],book_details["isIdentified"] is to find whether ISBN for the book is identified to add to book_details page or not
+    for books in book_details:#The list is ordered by donate_date so the oldest donated book comes first. To reverse the order, in book_num_sql in line 98 get_values.py append desc to the query
+        book_id=books["Book ID"]
+        book_name=books["Book Name"]
+        donate_date=books["Donate Date"]
+        isIdentified=books["isIdentified"]
     return render_template('roles/donor/book_usage_statistics.html')
 
 
