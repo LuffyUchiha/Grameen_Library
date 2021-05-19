@@ -21,9 +21,23 @@
 <!--                </div>-->
 <!--        </div>-->
 <!--</nav>-->
-<div class="jumbotron" align="center">
-    <legend class="boldheading">Grameen Library</legend>
+<div class="jumbotron jumbotron-bluebackground"
+     style="background-image:radial-gradient(rgb(7, 173, 202), rgb(0, 85, 100));" align="center">
+    <div class="row">
+        <div class="col-3">
+            <img src="{{ url_for('static', filename='images/grameen_library_logo.jpeg') }}" width="20%" height="60%">
+        </div>
+        <div class="col-6">
+            <legend class="boldheading">Grameen Library</legend>
+            <blockquote>--An Initiative by PMI PCC</blockquote>
+        </div>
+        <div class="col-3">
+            <img src="{{ url_for('static', filename='images/PMI_logo.jpeg') }}" width="40%" height="60%">
+        </div>
+    </div>
 </div>
+
+
 <div class="container">
     <div class="row">
         <div class="col-sm-4">
@@ -60,9 +74,12 @@
             </form>
         </div>
         <div class="col-sm-3 offset-sm-1">
-            <a href="{{ url_for('user_registration_page') }}" class="d-flex mt-4 mb-4 text-secondary">User Registration</a>
-            <a href="{{ url_for('donor_registration_page') }}" class="d-flex mt-4 mb-4 text-secondary">Donor Registration</a>
-            <a href="{{ url_for('panchayat_registration_page') }}" class="d-flex mt-4 mb-4 text-secondary">Librarian Registration</a>
+            <a href="{{ url_for('user_registration_page') }}" class="d-flex mt-4 mb-4 text-secondary">User
+                Registration</a>
+            <a href="{{ url_for('donor_registration_page') }}" class="d-flex mt-4 mb-4 text-secondary">Donor
+                Registration</a>
+            <a href="{{ url_for('panchayat_registration_page') }}" class="d-flex mt-4 mb-4 text-secondary">Librarian
+                Registration</a>
         </div>
     </div>
 </div>

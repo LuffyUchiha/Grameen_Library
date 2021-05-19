@@ -1,10 +1,4 @@
 from get_values import *
+import pandas as pd
+import numpy as np
 
-conn = connect_Postgres(
-    host="localhost",
-    database="postgres",
-    user="grlib",
-    password="pass"
-)
-
-print(conn)

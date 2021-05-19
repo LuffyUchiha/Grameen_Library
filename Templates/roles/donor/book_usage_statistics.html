@@ -5,5 +5,12 @@
 {% endblock head %}
 
 {% block body %}
-
+<div class="jumbotron">
+    {% for book in book_details %}
+        <h1>Book - {{ book['Book Name'] }}</h1>
+        <p>Book ID - {{ book['Book ID'] }}</p>
+        <p>Donate Date - {{ book['Donate Date'] }}</p>
+        <p>The book is - {{ 'identified' if book['isIdentified'] else 'not identified' }}</p>
+    {% endfor %}
+</div>
 {% endblock body %}

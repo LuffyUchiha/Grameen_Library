@@ -1,10 +1,11 @@
-.jumbotron{
+.jumbotron-bluebackground{
     background-color: rgb(7, 173, 202);
+    width: ;
 }
 
 .boldheading{
     color:floralwhite;
-    font-size:x-large;
+    font-size: 2.5em;
     font-weight: bolder;
 
 }
@@ -26,4 +27,34 @@
 .navbar-dark{
     /* background-color:rgb(7, 220, 202); */
     background-color: floralwhite;
+}
+
+/* Fonts */
+
+legend{
+    font-family: Brush Script MT;
+    font-size: larger;
+    font-weight: 800;
+}
+
+blockquote{
+    font-family: Brush Script MT;
+    font-size: larger;
+    font-weight: 800;
+}
+
+a{
+    font-family: Helvetica, sans-serif;
+    font-size:medium;
+    font-style: italic;
+    color: blue;
+}
+
+label, input{
+    font-family: Helvetica, san-serif;
+    font-size: medium;
+    font-style:oblique;
+}
+p{
+    font-family: cursive;
 }

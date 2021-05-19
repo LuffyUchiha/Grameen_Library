@@ -5,10 +5,12 @@ from flask import *
 from flask_cors import CORS, cross_origin
 import pandas as pd
 import numpy as np
-from forms import *
-from get_values import *
 from time import sleep
 import requests
+import datetime
+
+from forms import *
+from get_values import *
 
 plt.style.use('ggplot')
 
@@ -47,7 +49,7 @@ def landing_page():
         print('username: {}\npassword: {}'.format(username, password))
         res = login_response(username, password)
         if res['Response']:
-            return redirect(url_for('donor_page', username=res['ID']))
+            return redirect(url_for('donor_page', user_id=res['ID'], username=res['Name']))
         else:
             flash(message='Incorrect credentials, please try again', category='danger')
     return render_template('landing_page.html', form=login_form)
@@ -59,14 +61,16 @@ def landing_page():
 
 # donor stuff
 
-@app.route("/donor/<username>")
-def donor_page(username):
+@app.route("/donor/<user_id>")
+def donor_page(user_id):
     """
     Donor page rerouting based on the username.
     :param username: String
     :return: html template
     """
-    return render_template('roles/donor/donor_page.html', username=username)
+    username = request.args.get('username')
+    book_details = get_donate_book_details(user_id)
+    return render_template('roles/donor/donor_page.html', username=username, user_id=user_id, book_details=book_details)
 
 
 @app.route("/registration/donor", methods=['GET', 'POST'])
@@ -84,11 +88,12 @@ def donor_registration_page():
         password = donor_form.password.data
         email = donor_form.email.data
         phone = donor_form.phone_number.data
+        pmi_member = donor_form.pmi_member.data
 
-        print(username, password, email, phone)
         res = don_response(username, email, phone, password)
         if res['response'] == 1:
-            return redirect(url_for('donor_page', username=res['User ID']))
+            flash("User Registered Successfully\nUser ID - {}\nUsername - {}".format(res['User ID'], username), "success")
+            return redirect(url_for('landing_page'))
         else:
             # TODO  redirect Error Page
             pass
@@ -98,13 +103,13 @@ def donor_registration_page():
 
 @app.route("/donor/<username>/donate_books", methods=['GET', 'POST'])
 def donor_donation_page(username):
+    user_id = request.args.get('user_id')
     donation_form = DonationTemplate()
     if donation_form.validate_on_submit():
         book_name = donation_form.book_name.data
         ISBN = donation_form.ISBN.data
         author_name = donation_form.author_name.data
         category = donation_form.category.data
-
         req = {
             "username": username,
             "book_name": book_name,
@@ -116,9 +121,6 @@ def donor_donation_page(username):
         resp = requests.post(url="http://localhost:5000/donor/donor_donation"
                                  "?username={}&book_name={}&ISBN={}&author_name={}&category={}"
                              .format(username, book_name, ISBN, author_name, category))
-        print(resp.raw)
-        print(resp.request)
-        print(str(resp.content).split("'")[1])
         if str(resp.content).split("'")[1] == "Success":
             flash("Book Donated Successfully", "success")
             donation_form.book_name.data = ""
@@ -128,7 +130,7 @@ def donor_donation_page(username):
         elif str(resp.content).split("'")[1] == "Failure":
             flash("Donation Failed. Please contact the Volunteer", "danger")
 
-    return render_template('roles/donor/donate_books.html', form=donation_form, username=username)
+    return render_template('roles/donor/donate_books.html', form=donation_form, username=username, user_id=user_id, book_categories=['1','2','3'])
 
 
 @app.route("/donor/donor_donation", methods=['POST'])
@@ -148,13 +150,23 @@ def donor_donation_post_page():
 
 @app.route('/donation_visualization/')
 def donation_visualization():
+    book_details = request.args.to_dict(flat=False)['book_details']
+    t = {'Book ID': [], 'Book Name': [], 'Donate Date': [], 'isIdentified': []}
+    for x in book_details:
+        x = eval(x)
+        t['Book ID'].append(x['Book ID'])
+        t['Book Name'].append(x['Book Name'])
+        t['Donate Date'].append(x['Donate Date'])
+        t['isIdentified'].append(x['isIdentified'])
+    book_details = pd.DataFrame(t)
+    book_details = book_details[['Donate Date', 'Book ID']]
+    book_details['Donate Date'] = book_details['Donate Date'].apply(lambda x: "{}/{}".format(x.month, x.year))
+    book_details = book_details.groupby('Donate Date').agg(func=np.size)
     fig, ax = plt.subplots()
     canvas = FigureCanvas(fig)
-    x = np.arange(5)
-    y1 = np.random.randint(low=1, high=10, size=5)
-    y2 = np.random.randint(low=1, high=10, size=5)
-    plt.plot(x, y1)
-    plt.plot(x, y2)
+    x = np.array(book_details.index)
+    y = np.array(book_details['Book ID'])
+    plt.plot(x, y)
     plt.xlabel('Dates')
     plt.ylabel('Number of Books')
     plt.title('Distribution of books donated')
@@ -166,16 +178,12 @@ def donation_visualization():
 
 @app.route('/donor/<username>/donor_stats')
 def donor_stats(username):
-    # TODO get me the books donated by "username"(which is currently donor_id, will change later) as a json
-
-    (donate_book_count,book_details)=get_donate_book_details(username) #This function returns the number of books a donor has donated and a list of books as dictionaries
-    #book_details["Book ID"],book_details["Book Name"],book_details["Donate Date"],book_details["isIdentified"] is to find whether ISBN for the book is identified to add to book_details page or not
-    for books in book_details:#The list is ordered by donate_date so the oldest donated book comes first. To reverse the order, in book_num_sql in line 98 get_values.py append desc to the query
-        book_id=books["Book ID"]
-        book_name=books["Book Name"]
-        donate_date=books["Donate Date"]
-        isIdentified=books["isIdentified"]
-    return render_template('roles/donor/book_usage_statistics.html')
+    user_id = request.args.get('user_id')
+    book_details = request.args.to_dict(flat=False)['book_details']
+    bd = []
+    for x in book_details:
+        bd.append(eval(x))
+    return render_template('roles/donor/book_usage_statistics.html', book_details=bd)
 
 
 # admin stuff

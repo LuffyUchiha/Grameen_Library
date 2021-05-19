@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, NumberRange, Length
 
 
@@ -10,12 +10,13 @@ class LandingPageLoginForm(FlaskForm):
 
 
 class DonorRegistrationForm(FlaskForm):
-    username = StringField('Userame', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email(message='Enter a valid email')])
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[Email(message='Enter a valid email')])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     phone_number = StringField('Phone No.', validators=[DataRequired()])
+    pmi_member = BooleanField('Are you a pmi member?')
     submit = SubmitField()
 
 
@@ -44,7 +45,7 @@ class DonationTemplate(FlaskForm):
     book_name = StringField('Book Name', validators=[DataRequired()])
     ISBN = StringField('ISBN')
     author_name = StringField('Author Name')
-    category = StringField('Category')
+    category = SelectField('Category', choices=['Category 1', 'Category 2', 'Category 3'])
     submit = SubmitField('Donate')
 
 

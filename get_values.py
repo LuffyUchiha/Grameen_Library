@@ -90,7 +90,7 @@ def get_donate_book_details(id):
         host="localhost",
         database="postgres",
         user="grlib",
-        password="password"
+        password="pass"
     )
     if conn is not None:
         cur = conn.cursor()
@@ -102,15 +102,17 @@ def get_donate_book_details(id):
         num = res[0][0]
         detail_list = []
         for i in res:
-        	isIdentified=True
-        	if i[3] == "UNSORTED":
-        		isIdentified=False
-            detail_list.append(dict({"Book ID":i[2],"Book Name":i[4],"Donate Date":i[1],"isIdentified":isIdentified}))
+            isIdentified = True
+            if type(i[3]) == str and i[3].strip() == "UNSORTED":
+                isIdentified = False
+            else:
+                print(i, '\n\n\n\n')
+            detail_list.append(
+                dict({"Book ID": i[2], "Book Name": i[4], "Donate Date": i[1], "isIdentified": isIdentified}))
         cur.close()
         conn.commit()
         conn.close()
-        print(num,detail_list)
-        return (num,detail_list)
+        return detail_list
 
 
 def get_Panchayats():
@@ -118,7 +120,7 @@ def get_Panchayats():
         host="localhost",
         database="postgres",
         user="grlib",
-        password="password"
+        password="pass"
     )
     if conn is not None:
         cur = conn.cursor()
@@ -143,6 +145,14 @@ def vol_response(name, pmi_id, is_pmi_member):
 
 
 def don_response(name, email, phone, password):
+    """
+
+    :param name: String
+    :param email: String
+    :param phone: String/int
+    :param password: String
+    :return: {"User ID": user_id, "Name": name[0], "response": res}, res=response code (1 for success)
+    """
     name = name.split(maxsplit=1)
     if len(name) == 1:
         name.append("")
@@ -187,9 +197,9 @@ def user_response(name, panchayat, email, phone, password):
     # location_proof = dict(request.form)['Location_proof']
     conn = connect_Postgres(
         host="localhost",
-        database="Grameen_Library",
+        database="postgres",
         user="grlib",
-        password="password"
+        password="pass"
     )
     if conn is not None:
         cur = conn.cursor()
@@ -226,9 +236,9 @@ def pan_response(name, panchayat_name, email, phone, address, password):
         name.append("")
     conn = connect_Postgres(
         host="localhost",
-        database="Grameen_Library",
+        database="postgres",
         user="grlib",
-        password="password"
+        password="pass"
     )
     if conn is not None:
         cur = conn.cursor()
@@ -256,6 +266,13 @@ def pan_response(name, panchayat_name, email, phone, address, password):
 
 
 def login_response(user_id, password):
+    """
+
+    :param user_id: String/int
+    :param password: String
+    :return: {"Response": True, "Name": user[1], "Role": user[3], "ID": user[0]} if success
+            {"Response": False} if fail
+    """
     # Is there another table for extracting mobile number and other details with just the pml id and logic for this
     # part depends on that
     conn = connect_Postgres(
@@ -280,11 +297,12 @@ def login_response(user_id, password):
         conn.close()
         print(user)
         if user is not None:
-            return {"Response": True, "Name": user[1] + " " + user[2], "Role": user[3], "ID": user[0]}
+            return {"Response": True, "Name": user[1], "Role": user[3], "ID": user[0]}
         else:
             return {"Response": False}
     else:
         return {"Response": False}
+
 
 def admin_login_response(user_id, password):
     conn = connect_Postgres(
@@ -311,4 +329,4 @@ def admin_login_response(user_id, password):
         else:
             return {"Response": False}
 
-print(admin_login_response(3, 'pass'))
+

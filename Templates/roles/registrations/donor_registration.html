@@ -17,7 +17,7 @@
             {% endif %}
 
             <div class="form-group">
-                {{ form.username.label(class="form-control-label") }}
+                {{ form.username.label(class="form-control-label") }}<span class="text-danger">*</span>
                 {% if form.username.errors %}
                 {{ form.username(class="form-control form-control-lg is-invalid") }}
                 {% for error in form.username.errors %}
@@ -30,7 +30,7 @@
                 {% endif %}
             </div>
             <div class="form-group">
-                {{ form.password.label(class="form-control-label") }}
+                {{ form.password.label(class="form-control-label") }}<span class="text-danger">*</span>
                 {% if form.password.errors %}
                 {{ form.password(class="form-control form-control-lg is-invalid") }}
                 {% for error in form.password.errors %}
@@ -43,7 +43,7 @@
                 {% endif %}
             </div>
             <div class="form_group">
-                {{ form.confirm_password.label(class="form-control-label") }}
+                {{ form.confirm_password.label(class="form-control-label") }}<span class="text-danger">*</span>
                 {% if form.confirm_password.errors %}
                 {{ form.confirm_password(class="form-control form-control-lg is-invalid ") }}
                 {% for error in form.confirm_password.errors %}
@@ -69,7 +69,7 @@
                 {% endif %}
             </div>
             <div class="form_group">
-                {{ form.phone_number.label(class="form-control-label") }}
+                {{ form.phone_number.label(class="form-control-label") }}<span class="text-danger">*</span>
                 {% if form.phone_number.errors %}
                 {{ form.phone_number(class="form-control form-control-lg is-invalid") }}
                 {% for error in form.phone_number.errors %}
@@ -83,10 +83,19 @@
             </div>
 
             {% endwith %}
+            <div class="form-check">
+                {{ form.pmi_member(class="form-check-input") }}
+                {{ form.pmi_member.label(class="form-check-label") }}
+            </div>
         </fieldset>
-        <div class="form-group">
-            {{ form.submit(class="btn btn-outline-info") }}
+        <div class="row">
+            <div class="form-group offset-1 mr-4">
+                <a type="button" class="btn btn-outline-info" href="{{ url_for('landing_page') }}">Go Back</a>
+            </div>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
         </div>
-    </form>
+</form>
 </div>
 {% endblock body %}
