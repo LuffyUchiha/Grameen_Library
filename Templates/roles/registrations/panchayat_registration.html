@@ -6,29 +6,56 @@
     {{ form.hidden_tag() }}
     <div class="container">
         <fieldset class="form-group">
-        <legend class="border-bottom mb-4">Login</legend>
-        {% with messages = get_flashed_messages(with_categories=true) %}
+            <legend class="border-bottom mb-4">Login</legend>
+            {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
             {% endif %}
-        {% endwith %}
-        <div class="form-group">
-            {{ form.username.label(class="form-control-label") }}
+            {% endwith %}
+            <div class="form-group">
+                {{ form.panchayat_name.label(class="form-control-label") }}<span class="text-danger">*</span>
+                {{ form.panchayat_name(class="form-control form-control-lg") }}
+            </div>
+            <div class="form-group">
+                {{ form.poc_name.label(class="form-control-label") }}<span class="text-danger">*</span>
+                {{ form.poc_name(class="form-control form-control-lg") }}
+            </div>
+            <div class="form-group">
+                {{ form.poc_email.label(class="form-control-label") }}<span class="text-danger">*</span>
+                {{ form.poc_email(class="form-control form-control-lg") }}
+            </div>
+            <div class="form-group">
+                {{ form.poc_phone_number.label(class="form-control-label") }}<span class="text-danger">*</span>
+                {{ form.poc_phone_number(class="form-control form-control-lg") }}
+            </div>
+            <div class="form-group">
+                {{ form.poc_address_1.label(class="form-control-label") }}<span class="text-danger">*</span>
+                {{ form.poc_address_1(class="form-control form-control-lg") }}
+                {{ form.poc_address_2(class="form-control form-control-lg") }}
+                {{ form.poc_address_3(class="form-control form-control-lg") }}
+            </div>
+            <div class="form-group">
+                {{ form.password.label(class="form-control-label") }}<span class="text-danger">*</span>
+                {{ form.password(class="form-control form-control-lg") }}
+            </div>
+            <div class="form-group">
+                {{ form.confirm_password.label(class="form-control-label") }}<span class="text-danger">*</span>
 
-            {{ form.username(class="form-control form-control-lg") }}
+                {{ form.confirm_password(class="form-control form-control-lg") }}
+            </div>
+        </fieldset>
+        <div class="row">
+            <div class="form-group offset-1 mr-4">
+                <a type="button" class="btn btn-outline-info" href="{{ url_for('landing_page') }}">Go Back</a>
+            </div>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
         </div>
-        <div class="form-group">
-            {{ form.password.label(class="form-control-label") }}
-            {{ form.password(class="form-control form-control-lg") }}
-        </div>
-    </fieldset>
-    <div class="form-group">
-        {{ form.submit(class="btn btn-outline-info") }}
-    </div>
     </div>
 </form>
 

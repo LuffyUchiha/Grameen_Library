@@ -1,11 +1,10 @@
 .jumbotron-bluebackground{
     background-color: rgb(7, 173, 202);
-    width: ;
 }
 
 .boldheading{
     color:floralwhite;
-    font-size: 2.5em;
+    font-size: 4em;
     font-weight: bolder;
 
 }
@@ -33,8 +32,9 @@
 
 legend{
     font-family: Brush Script MT;
-    font-size: larger;
+    font-size: 32;
     font-weight: 800;
+    font-style: italic;
 }
 
 blockquote{
@@ -47,6 +47,7 @@ a{
     font-family: Helvetica, sans-serif;
     font-size:medium;
     font-style: italic;
+    font-weight: bold;
     color: blue;
 }
 

@@ -1,14 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Test</title>
-	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-</head>
-<body>
-<div class="container">
-	<img src="{{ url_for('donation_visualization') }}">
+<div class="ml-2">
+    {{ form.id_proof.label(class="form-control-label") }}
+</div>
+<div class="dropdown row justify-content-start">
+    <div class="col-3">
+        <select class="btn form-control btn-info" id="id_proof" name="id_proof">
+            {% for x in form.id_proof.choices %}
+            <option value="{{ x }}">{{ x }}</option>
+            {% endfor %}
+        </select>
+    </div>
 </div>
 
-<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
-</body>
-</html>
+<div class="ml-2">
+    {{ form.location_proof.label(class="form-control-label") }}
+</div>
+<div class="dropdown row justify-content-start">
+    <div class="col-3">
+        <select class="btn form-control btn-info" id="location_proof" name="location_proof">
+            {% for x in form.location_proof.choices %}
+            <option value="{{ x }}">{{ x }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>

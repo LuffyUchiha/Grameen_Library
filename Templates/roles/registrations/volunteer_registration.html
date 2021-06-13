@@ -29,6 +29,19 @@
                 {{ form.username(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
+            <div>
+                {{ form.pmi_id.label(class="form-control-label") }}<span class="text-danger">*</span>
+                {% if form.pmi_id.errors %}
+                {{ form.username(class="form-control form-control-lg is-invalid") }}
+                {% for error in form.username.errors %}
+                <div class="invalid-feedback">
+                    <span>{{error}}</span>
+                </div>
+                {% endfor %}
+                {% else %}
+                {{ form.pmi_id(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
             <div class="form-group">
                 {{ form.password.label(class="form-control-label") }}<span class="text-danger">*</span>
                 {% if form.password.errors %}
@@ -55,60 +68,11 @@
                 {{ form.confirm_password(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-            <div class="form-group">
-                {{ form.donor_address_1.label(class="form-control-label") }}<span class="text-danger">*</span>
-                {% if form.donor_address_1.errors %}
-                {{ form.donor_address_1(class="form-control form-control-lg is-invalid") }}
-                {{ form.donor_address_2(class="form-control form-control-lg is-invalid") }}
-                {{ form.donor_address_3(class="form-control form-control-lg is-invalid") }}
-                {% for error in form.user_address_1.errors %}
-                <div class="invalid-feedback">
-                    <span>{{error}}</span>
-                </div>
-                {% endfor %}
-                {% else %}
-                {{ form.donor_address_1(class="form-control form-control-lg") }}
-                {{ form.donor_address_2(class="form-control form-control-lg") }}
-                {{ form.donor_address_3(class="form-control form-control-lg") }}
-                {% endif %}
-
-            </div>
-            <div class="form_group">
-                {{ form.email.label(class="form-control-label") }}
-                {% if form.email.errors %}
-                {{ form.email(class="form-control form-control-lg is-invalid") }}
-                {% for error in form.email.errors %}
-                <div class="invalid-feedback">
-                    <span>{{ error }}</span>
-                </div>
-                {% endfor %}
-                {% else %}
-                {{ form.email(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <div class="form_group">
-                {{ form.phone_number.label(class="form-control-label") }}<span class="text-danger">*</span>
-                {% if form.phone_number.errors %}
-                {{ form.phone_number(class="form-control form-control-lg is-invalid") }}
-                {% for error in form.phone_number.errors %}
-                <div class="invalid-feedback">
-                    <span>{{error}}</span>
-                </div>
-                {% endfor %}
-                {% else %}
-                {{ form.phone_number(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
 
             {% endwith %}
             <div class="form-check">
                 {{ form.pmi_member(class="form-check-input") }}
                 {{ form.pmi_member.label(class="form-check-label") }}
-            </div>
-            <div class="form-group" style="display: none;" id="pmi_id_input">
-                <label class="form-control-label" for="pmi_id"> PMI ID</label>
-                <input class="form-control form-control-lg" name="pmi_id" id="pmi_id" required placeholder="PMI ID"
-                       type="text">
             </div>
         </fieldset>
         <div class="row">
@@ -119,23 +83,6 @@
                 {{ form.submit(class="btn btn-outline-info") }}
             </div>
         </div>
-    </form>
-    <p id="test"></p>
+</form>
 </div>
 {% endblock body %}
-
-{% block script %}
-<script>
-    $(document).ready(function() {
-        $('#pmi_member').click(function() {
-            if($(this).prop("checked") == true){
-                $('#pmi_id_input').show();
-            }
-            else{
-                $('#pmi_id_input').hide();
-            }
-        })
-    })
-
-</script>
-{% endblock script %}

@@ -5,12 +5,40 @@
 {% endblock head %}
 
 {% block body %}
-<div class="jumbotron">
+<div>
+    <div class="jumbotron jumbotron-bluebackground"
+     style="background-image:radial-gradient(rgb(7, 173, 202), rgb(0, 85, 100));" align="center">
+    <div class="row">
+        <div class="col-3">
+            <img src="{{ url_for('static', filename='images/PMI_logo.jpeg') }}" width="60%" height="60%">
+        </div>
+        <div class="col-6">
+            <legend class="boldheading">Donated Book Details</legend>
+        </div>
+        <div class="col-3"></div>
+    </div>
+</div>
+    <div class="container-fluid" style="position: fixed;">
+        <a class="btn btn-lg ml-5" type="button" onclick="history.back()" style="background-color: rgb(66, 203, 245);">Go Back</a>
+    </div>
+    <div class="container pt-5 pb-5">
     {% for book in book_details %}
-        <h1>Book - {{ book['Book Name'] }}</h1>
-        <p>Book ID - {{ book['Book ID'] }}</p>
-        <p>Donate Date - {{ book['Donate Date'] }}</p>
-        <p>The book is - {{ 'identified' if book['isIdentified'] else 'not identified' }}</p>
+    <div class="card mt-2 mb-2" style="background-color: rgb(66, 203, 245);">
+        <div class="card-header">
+            <b>{{ book['Book Name'] }}</b>
+        </div>
+        <div class="card-body">
+            <p>Book ID - {{ book['Book ID'] }}</p>
+            <p>Was Donated on {{ book['Donate Date'] }}</p>
+            <p>The book is - {{ 'identified' if book['isIdentified'] else 'in a storehouse' }}</p>
+        </div>
+    </div>
+<!--        <h1>Book - {{ book['Book Name'] }}</h1>-->
+<!--        <p>Book ID - {{ book['Book ID'] }}</p>-->
+<!--        <p>Donate Date - {{ book['Donate Date'] }}</p>-->
+<!--        <p>The book is - {{ 'identified' if book['isIdentified'] else 'not identified' }}</p>-->
     {% endfor %}
 </div>
+</div>
+
 {% endblock body %}

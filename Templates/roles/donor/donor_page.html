@@ -22,58 +22,167 @@
 <!--                </div>-->
 <!--        </div>-->
 <!--</nav>-->
-<div class = "container">
-	<div class="row justify-content-center mb-5 mt-5">
-		<div class="col-6">
-			<div class="row justify-content-end">
-				<h3 class="userpageheader">Donor Dashboard</h3>
-			</div>
-		</div>
-		<div class="col-6">
-			<div class="row justify-content-end">
-				<a type="button" href="{{url_for('landing_page')}}" class="btn btn-danger btn-danger"> Logout </a>
-			</div>
-		</div>
-	</div>
-	<div class="row justify-content-center">
-		<div class="col-6">
-			<div class="row justify-content-center">
-				<p class="userpagebody">Donor ID: {{user_id}}</p>
-			</div>
-		</div>
-		<div class="col-6">
-			<div class="row justify-content-center">
-				<p class="userpagebody">Number of books donated: {{ book_details.__len__() }}</p>
-			</div>
-		</div>
-	</div>
-	<div class="row justify-content-center">
-		<img src="{{url_for('donation_visualization', book_details=book_details)}}" alt="Some Random Data">
-	</div>
-<!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
-<!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
-<!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
-<!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
-<!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
-
-	<div class="row justify-content-center">
-		<div class="col-6">
-			<div class="row justify-content-center">
-				<a type="button" class="btn btn-lg btn-dark" href="{{ url_for('donor_donation_page', user_id=user_id, username=username) }}">Donate Books</a> <br>
-			</div>
-			<div class="row justify-content-center">
-				<p>Give your books a second life... or maybe a third one</p>
-			</div>
-
-		</div>
-		<div class="col-6">
-			<div class="row justify-content-center">
-				<a type="button" class="btn btn-lg btn-dark" href="{{ url_for('donor_stats', user_id=user_id, book_details=book_details, username=username) }}">Book usage</a>
-			</div>
-			<div class="row justify-content-center">
-				<p> If you have donated your books, see where they found their new homes</p>
-			</div>
-		</div>
-	</div>
+<div class="jumbotron jumbotron-bluebackground"
+     style="background-image:radial-gradient(rgb(7, 173, 202), rgb(0, 85, 100));" align="center">
+    <div class="row">
+        <div class="col-3">
+            <img src="{{ url_for('static', filename='images/PMI_logo.jpeg') }}" width="60%" height="60%">
+        </div>
+        <div class="col-6">
+            <legend class="boldheading">Donor Dashboard</legend>
+        </div>
+        <div class="col-3"></div>
+    </div>
 </div>
+
+<div id="test">
+
+</div>
+<div class="container">
+<!--    <div class="row justify-content-center mb-5 mt-5">-->
+<!--        <div class="col-6">-->
+<!--            <div class="row justify-content-end">-->
+<!--                <h3 class="userpageheader">Donor Dashboard</h3>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="col-6">-->
+<!--            <div class="row justify-content-end">-->
+<!--                <a type="button" href="{{url_for('landing_page')}}" class="btn btn-danger btn-danger"> Logout </a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <div class="row justify-content-end mr-3" style="font-size: 25px;">
+                <p class="userpagebody">Donor ID: {{user_id}}</p>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="row justify-content-start ml-3" style="font-size: 25px;">
+                <p class="userpagebody">Number of books donated: {{ book_details.__len__() }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <img src="{{url_for('donation_visualization', book_details=book_details)}}" alt="Some Random Data">
+        </div>
+        <div class="col-6 d-flex justify-content-center align-items-center">
+            <form method="post" action="" id="donordetailsform">
+                <div class="card mb-4" id="confirmupdate" style="display: none; background-color: palegreen;">
+                    <div class="card-header">
+                        Update Successful
+                    </div>
+                </div>
+                <fieldset>
+                    <div class="form-group row">
+                        <div class="col-4 align-self-center">
+                            <label class="form-control-label" for="username"> Username</label>
+                        </div>
+                        <div class="col-">
+                            <input class="form-control" type="text" id="username" name="username"
+                                   placeholder="{{donor_details['username']}}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-4 align-self-center">
+                            <label class="form-control-label" for="email"> Email</label>
+                        </div>
+                        <div class="col-">
+                            <input class="form-control" type="text" id="email" name="email"
+                                   placeholder="{{donor_details['email']}}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-4 align-self-center">
+                            <label class="form-control-label" for="mobile"> Mobile Number</label>
+                        </div>
+                        <div class="col-">
+                            <input class="form-control" type="text" id="mobile" name="mobile"
+                                   placeholder="{{donor_details['mobile_number']}}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-4 align-self-center">
+                            <label class="form-control-label" for="address"> Address</label>
+                        </div>
+                        <div class="col-">
+                            <textarea class="form-control" id="address"
+                                      name="address" rows="3" cols="20">{{ donor_details['address'] }}</textarea>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="form-group d-flex justify-content-center">
+                    <a class="btn btn-dark" id="updatedetails" style="color: white">Change Details</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
+    <!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
+    <!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
+    <!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
+    <!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
+
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <div class="row justify-content-center">
+                <a type="button" class="btn btn-lg btn-dark"
+                   href="{{ url_for('donor_donation_page', user_id=user_id, username=username) }}">Donate Books</a> <br>
+            </div>
+            <div class="row justify-content-center">
+                <p>Give your books a second life... or maybe a third one</p>
+            </div>
+
+        </div>
+        <div class="col-6">
+            <div class="row justify-content-center">
+                <a type="button" class="btn btn-lg btn-dark"
+                   href="{{ url_for('donor_stats', user_id=user_id, book_details=book_details, username=username) }}">Book
+                    Usage</a>
+            </div>
+            <div class="row justify-content-center">
+                <p> If you have donated your books, see where they found their new homes</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+    $('#updatedetails').on('click', function(event){
+        event.preventDefault();
+        $.ajax({
+            data: {
+                'user_id': {{ user_id }},
+                'username': $('#username').val(),
+                'username_placeholder': $('#username').attr('placeholder'),
+                'email': $('#email').val(),
+                'email_placeholder': $('#email').attr('placeholder'),
+                'mobile': $('#mobile').val(),
+                'mobile_placeholder': $('#mobile').attr('placeholder'),
+                'address': $('#address').val(),
+                'address_placeholder': $('#address').attr('placeholder')
+            },
+            type: 'POST',
+            url: '/donor/update_details'
+        }).done(function(resp){
+            var data = JSON.parse(resp);
+            $('#username').attr('placeholder', data['username']);
+            $('#email').attr('placeholder', data['email']);
+            $('#mobile').attr('placeholder', data['mobile']);
+            $('#address').attr('placeholder', data['address']);
+            $('#confirmupdate').show();
+            setTimeout(function(){$('#confirmupdate').hide()},1000);
+        });
+
+    });
+  });
+
+
+
+
+</script>
 {% endblock %}

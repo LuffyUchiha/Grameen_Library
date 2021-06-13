@@ -30,7 +30,7 @@
                     {{ form.hidden_tag() }}
                     <fieldset class="form-group">
                         <legend class="border-bottom mb-4">
-                            <div class="mt-2 ml-2 mb-2">Please enter the book details you know</div>
+                            <div class="mt-2 ml-2 mb-2">Please enter the book details</div>
                         </legend>
                         {% with messages = get_flashed_messages(with_categories=True) %}
                         {% if messages %}
@@ -68,25 +68,21 @@
                         <div class="ml-2">
                             {{ form.category.label(class="form-control-label") }}
                         </div>
-                        <div class="row justify-content-center">
-                            <div class="dropdown show col-auto">
-                                <a class="btn form-group dropdown-toggle btn-info" href="#" role="button"
-                                   id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true">
-                                    Category
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown row justify-content-center">
+                            <div class="col-3">
+                                <select class="btn form-control btn-info" id="category" name="category">
                                     {% for x in form.category.choices %}
-                                    <a class="dropdown-item" href="#">{{ x }}</a>
+                                    <option value="{{ x }}">{{ x }}</option>
                                     {% endfor %}
-                                </div>
+                                </select>
                             </div>
-
                         </div>
+
                     </fieldset>
                     <div class="form-group row">
                         <div class="col-6" align="center">
                             <a class="btn btn-lg btn-outline-info" type="button"
-                               href="{{ url_for('donor_page', username=username, user_id=user_id) }}"> Go Back</a>
+                               href="{{ url_for('donor_page', username=username, user_id=user_id) }}"> Back to Main Screen</a>
                         </div>
                         <div class="col-6" align="center">
                             {{ form.submit(class="btn btn-lg btn-outline-info") }}
@@ -101,12 +97,4 @@
 <div style="background-color:rgb(7, 173, 202);height:25vh"></div>
 {% endblock body %}
 
-{% block script %}
-    <script>
-        $('.dropdown-menu').on( 'click', 'a', function() {
-            var text = $(this).html();
-            var htmlText = text + ' <span class="caret"></span>';
-            $(this).closest('.dropdown').find('.dropdown-toggle').html(htmlText);
-        });
-    </script>
-{% endblock script %}
+
