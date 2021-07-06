@@ -10,13 +10,13 @@
 <!--            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">-->
 <!--                <span class="navbar-toggler-icon"></span>-->
 <!--            </button>-->
-<!--           <a class="navbar-brand" href="#"><a class="navbar-brand mr-auto" href="{{url_for('landing_page')}}"><img src="/static/images/grameen_library_logo.jpeg" height="40" width="40"></a>-->
+<!--           <a class="navbar-brand" href="#"><a class="navbar-brand mr-auto" href="{{url_for('ui.landing_page')}}"><img src="/static/images/grameen_library_logo.jpeg" height="40" width="40"></a>-->
 <!--        </a>-->
 <!--                <div class="collapse navbar-collapse" id="Navbar">-->
 <!--                    <ul class="navbar-nav mr-auto">-->
-<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('about_page') }}">About Grameen Library</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('donation_info_page') }}"> About Donation</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('library_info_page') }}"> About Usage</a></li>-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('ui.about_page') }}">About Grameen Library</a></li>-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('ui.donation_info_page') }}"> About Donation</a></li>-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('ui.library_info_page') }}"> About Usage</a></li>-->
 <!--                    </ul>-->
 <!--                </div>-->
 <!--        </div>-->
@@ -35,7 +35,7 @@
                         {% with messages = get_flashed_messages(with_categories=True) %}
                         {% if messages %}
                         {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
+                        <div class="alert alert-{{ category }}" id="donationconfirm">
                             <b>{{ message }}</b>
                         </div>
                         {% endfor %}
@@ -49,6 +49,17 @@
                                 {{ form.book_name(class="form-control form-control-lg") }}
                             </div>
                         </div>
+                        <div id="number_books" style="display: none;">
+                            <div class="ml-2">
+                                {{ form.no_of_books.label(class="form-control-label") }}
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="form-group mb-5 mt-3 col-10">
+                                    {{ form.no_of_books(class="form-control form-control-lg") }}
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="ml-2">
                             {{ form.ISBN.label(class="form-control-label") }}
                         </div>
@@ -82,7 +93,8 @@
                     <div class="form-group row">
                         <div class="col-6" align="center">
                             <a class="btn btn-lg btn-outline-info" type="button"
-                               href="{{ url_for('donor_page', username=username, user_id=user_id) }}"> Back to Main Screen</a>
+                               href="{{ url_for('donor_ui.donor_page', username=username, user_id=user_id) }}"> Back to Main
+                                Screen</a>
                         </div>
                         <div class="col-6" align="center">
                             {{ form.submit(class="btn btn-lg btn-outline-info") }}
@@ -97,4 +109,22 @@
 <div style="background-color:rgb(7, 173, 202);height:25vh"></div>
 {% endblock body %}
 
+{% block script %}
+<script>
+    $("#donationconfirm").ready(function(){
+        setTimeout(function(){$('#donationconfirm').hide()}, 3000);
+    });
 
+    $("#book_name").keyup(function(){
+        if($("#book_name").val() != ""){
+            $("#test").text("hello");
+            $("#number_books").show();
+        }
+        else{
+            $("#number_books").hide();
+        }
+    });
+
+</script>
+
+{% endblock script %}

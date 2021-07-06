@@ -1,12 +1,161 @@
 {% extends "bootstrap_enabler.html" %}
 
 {% block head %}
-<title>volunteer Page</title>
+<title>Volunteer Page</title>
 {% endblock %}
 
 {% block body %}
-<div class="container">
-    <p>volunteer Page</p>
+<div class="jumbotron jumbotron-bluebackground"
+     style="background-image:radial-gradient(rgb(7, 173, 202), rgb(0, 85, 100));" align="center">
+    <div class="row">
+        <div class="col-3">
+            <img src="{{ url_for('static', filename='images/PMI_logo.jpeg') }}" width="60%" height="60%">
+        </div>
+        <div class="col-6">
+            <legend class="boldheading">Volunteer Dashboard</legend>
+        </div>
+        <div class="col-3 align-self-end flex-column">
+            <a type="button" href="{{url_for('ui.landing_page')}}" class="btn btn-danger btn-danger" id="logout">
+                Logout </a>
+        </div>
+    </div>
 </div>
 
+<div class="container-fluid row">
+    <div class="col-3">
+        <div class="card">
+            <div class="card-header">
+                <b>Achievements</b>
+            </div>
+            <div class="card-body">
+                <!--                TODO 0 changes to the database value-->
+                <b id="books-donated">Books Donated: 0</b><br>
+                <b id="donors-reached">Donors Reached: 0</b><br>
+            </div>
+            <div class="card-header">
+                <b>Acknowledgements</b>
+            </div>
+            <div class="card-body">
+                {% for x in acknowledgements %}
+                <blockquote class="blockquote">
+                    <a href="#"> Acknowledgement</a>
+                    <footer class="blockquote-footer">Admin Name</footer>
+                </blockquote>
+                {% endfor %}
+                <!--                TODO get from acknowledgements into a loop-->
+                <blockquote class="blockquote">
+                    <a href="#"> Acknowledgement</a>
+                    <footer class="blockquote-footer"><small>Admin Name</small></footer>
+                </blockquote>
+                <blockquote class="blockquote">
+                    <a href="#"> Acknowledgement</a>
+                    <footer class="blockquote-footer"><small>Admin Name</small></footer>
+                </blockquote>
+                <blockquote class="blockquote">
+                    <a href="#"> Acknowledgement</a>
+                    <footer class="blockquote-footer"><small>Admin Name</small></footer>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <form method="post" action="" id="search">
+            <div class="row border">
+                <div class="col-1">
+                    <p>Distance (km)</p>
+                </div>
+                <div class="col-2 align-self-center">
+                    <input type="number" class="form-control" id="search-distance" value="5">
+                </div>
+                <div class="col-2 align-self-center">
+                    <p>Number of donors</p>
+                </div>
+                <div class="col-2 align-self-center">
+                    <input type="number" class="form-control" id="search-number" value="3">
+                </div>
+                <div class="col d-flex justify-content-end align-self-center mr-3">
+                    <a type="button" class="btn btn-dark" href="#" id="dosearch">Search</a>
+                </div>
+            </div>
+        </form>
+
+        <div class='card' style="display: none" id="search-result">
+            <div class="card-body" id="search-result-display">
+
+            </div>
+        </div>
+
+    </div>
+    <div class="col-3">
+        <div class="card">
+            <div class="card-header">
+                <p>Details</p>
+            </div>
+            <div class="card-body">
+                <form method="post" action="" id="details">
+                    <fieldset>
+                        <div class="form-group row">
+                            <div class="col-4 align-self-center">
+                                <label class="form-control-label" for="name"> Name:</label>
+                            </div>
+                            <div class="col-">
+                                <input class="form-control" type="text" id="name" name="name" value="volunteer">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4 align-self-center">
+                                <label class="form-control-label" for="pincode"> Pincode:</label>
+                            </div>
+                            <div class="col-">
+                                <input class="form-control" type="text" id="pincode" name="pincode" value="500090">
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group d-flex justify-content-center">
+                        <a class="btn btn-dark" id="updatedetails" href="#">Change Details</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('#dosearch').click(function() {
+            $('#search-result').show();
+           var number = $('#search-number').val();
+           var donors = `<thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Address</th>
+              <th scope="col">Preferred Date</th>
+              <th scope="col">Distance</th>
+              <th scope="col">No. of Books</th>
+            </tr>
+          </thead>
+          <tbody>`;
+           for(let i=0; i<number;++i){
+                donors = donors + `<tr>
+                  <td>Donor Name</td>
+                  <td>address</td>
+                  <td>date</td>
+                  <td>x km</td>
+                  <td>1</td>
+                </tr>`;
+           }
+           $('#search-result-display').html(`<table class="table">` + donors + `</tbody>`);
+        });
+
+        $('#logout').click(function() {
+           $.post('/logout');
+        });
+    })
+
+
+</script>
 {% endblock %}

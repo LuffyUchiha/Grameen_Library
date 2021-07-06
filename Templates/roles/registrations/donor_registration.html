@@ -6,7 +6,7 @@
     <form method="post" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Login</legend>
+            <legend class="border-bottom mb-4">Register</legend>
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             {% for category, message in messages %}
@@ -71,7 +71,45 @@
                 {{ form.donor_address_2(class="form-control form-control-lg") }}
                 {{ form.donor_address_3(class="form-control form-control-lg") }}
                 {% endif %}
-
+            </div>
+            <div class="form_group">
+                {{ form.city.label(class="form-control-label") }}
+                {% if form.city.errors %}
+                {{ form.city(class="form-control form-control-lg is-invalid") }}
+                {% for error in form.email.errors %}
+                <div class="invalid-feedback">
+                    <span>{{ error }}</span>
+                </div>
+                {% endfor %}
+                {% else %}
+                {{ form.city(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form_group">
+                {{ form.state.label(class="form-control-label") }}
+                {% if form.state.errors %}
+                {{ form.state(class="form-control form-control-lg is-invalid") }}
+                {% for error in form.email.errors %}
+                <div class="invalid-feedback">
+                    <span>{{ error }}</span>
+                </div>
+                {% endfor %}
+                {% else %}
+                {{ form.state(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form_group">
+                {{ form.pincode.label(class="form-control-label") }}<span class="text-danger">*</span>
+                {% if form.pincode.errors %}
+                {{ form.pincode(class="form-control form-control-lg is-invalid") }}
+                {% for error in form.email.errors %}
+                <div class="invalid-feedback">
+                    <span>{{ error }}</span>
+                </div>
+                {% endfor %}
+                {% else %}
+                {{ form.pincode(class="form-control form-control-lg") }}
+                {% endif %}
             </div>
             <div class="form_group">
                 {{ form.email.label(class="form-control-label") }}
@@ -107,13 +145,13 @@
             </div>
             <div class="form-group" style="display: none;" id="pmi_id_input">
                 <label class="form-control-label" for="pmi_id"> PMI ID</label>
-                <input class="form-control form-control-lg" name="pmi_id" id="pmi_id" required placeholder="PMI ID"
+                <input class="form-control form-control-lg" name="pmi_id" id="pmi_id" placeholder="PMI ID"
                        type="text">
             </div>
         </fieldset>
         <div class="row">
             <div class="form-group offset-1 mr-4">
-                <a type="button" class="btn btn-outline-info" href="{{ url_for('landing_page') }}">Go Back</a>
+                <a type="button" class="btn btn-outline-info" href="{{ url_for('ui.landing_page') }}">Go Back</a>
             </div>
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}
@@ -127,6 +165,10 @@
 {% block script %}
 <script>
     $(document).ready(function() {
+        if($('#pmi_member').prop("checked") == true){
+            $('#pmi_id_input').show();
+        }
+
         $('#pmi_member').click(function() {
             if($(this).prop("checked") == true){
                 $('#pmi_id_input').show();

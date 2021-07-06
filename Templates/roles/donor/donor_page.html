@@ -11,13 +11,13 @@
 <!--            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">-->
 <!--                <span class="navbar-toggler-icon"></span>-->
 <!--            </button>-->
-<!--           <a class="navbar-brand" href="#"><a class="navbar-brand mr-auto" href="{{url_for('landing_page')}}"><img src="/static/images/grameen_library_logo.jpeg" height="40" width="40"></a>-->
+<!--           <a class="navbar-brand" href="#"><a class="navbar-brand mr-auto" href="{{url_for('ui.landing_page')}}"><img src="/static/images/grameen_library_logo.jpeg" height="40" width="40"></a>-->
 <!--        </a>-->
 <!--                <div class="collapse navbar-collapse" id="Navbar">-->
 <!--                    <ul class="navbar-nav mr-auto">-->
-<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('about_page') }}">About Grameen Library</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('donation_info_page') }}"> About Donation</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('library_info_page') }}"> About Usage</a></li>-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('ui.about_page') }}">About Grameen Library</a></li>-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('ui.donation_info_page') }}"> About Donation</a></li>-->
+<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('ui.library_info_page') }}"> About Usage</a></li>-->
 <!--                    </ul>-->
 <!--                </div>-->
 <!--        </div>-->
@@ -35,9 +35,7 @@
     </div>
 </div>
 
-<div id="test">
 
-</div>
 <div class="container">
 <!--    <div class="row justify-content-center mb-5 mt-5">-->
 <!--        <div class="col-6">-->
@@ -46,9 +44,9 @@
 <!--            </div>-->
 <!--        </div>-->
 <!--        <div class="col-6">-->
-<!--            <div class="row justify-content-end">-->
-<!--                <a type="button" href="{{url_for('landing_page')}}" class="btn btn-danger btn-danger"> Logout </a>-->
-<!--            </div>-->
+            <div class="row justify-content-end">
+                <a type="button" href="{{url_for('ui.landing_page')}}" class="btn btn-danger btn-danger" id="logout"> Logout </a>
+            </div>
 <!--        </div>-->
 <!--    </div>-->
     <div class="row justify-content-center">
@@ -65,7 +63,7 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-6">
-            <img src="{{url_for('donation_visualization', book_details=book_details)}}" alt="Some Random Data">
+            <img src="{{url_for('donor_ui.donation_visualization', book_details=book_details)}}" alt="Some Random Data">
         </div>
         <div class="col-6 d-flex justify-content-center align-items-center">
             <form method="post" action="" id="donordetailsform">
@@ -111,9 +109,36 @@
                                       name="address" rows="3" cols="20">{{ donor_details['address'] }}</textarea>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <div class="col-4 align-self-center">
+                            <label class="form-control-label" for="city"> City</label>
+                        </div>
+                        <div class="col-">
+                            <input class="form-control" type="text" id="city" name="city"
+                                   placeholder="{{donor_details['city']}}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-4 align-self-center">
+                            <label class="form-control-label" for="state"> State</label>
+                        </div>
+                        <div class="col-">
+                            <input class="form-control" type="text" id="state" name="state"
+                                   placeholder="{{donor_details['state']}}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-4 align-self-center">
+                            <label class="form-control-label" for="pincode"> Pincode</label>
+                        </div>
+                        <div class="col-">
+                            <input class="form-control" type="text" id="pincode" name="pincode"
+                                   placeholder="{{donor_details['pincode']}}">
+                        </div>
+                    </div>
                 </fieldset>
                 <div class="form-group d-flex justify-content-center">
-                    <a class="btn btn-dark" id="updatedetails" style="color: white">Change Details</a>
+                    <a class="btn btn-dark" id="updatedetails" href="#">Change Details</a>
                 </div>
             </form>
         </div>
@@ -122,13 +147,12 @@
     <!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
     <!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
     <!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
-    <!--	<div class="mt-5 mn-5"><p>.......</p></div>-->
 
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mt-3">
         <div class="col-6">
             <div class="row justify-content-center">
                 <a type="button" class="btn btn-lg btn-dark"
-                   href="{{ url_for('donor_donation_page', user_id=user_id, username=username) }}">Donate Books</a> <br>
+                   href="{{ url_for('donor_ui.donor_donation_page', user_id=user_id, username=username) }}">Donate Books</a> <br>
             </div>
             <div class="row justify-content-center">
                 <p>Give your books a second life... or maybe a third one</p>
@@ -138,7 +162,7 @@
         <div class="col-6">
             <div class="row justify-content-center">
                 <a type="button" class="btn btn-lg btn-dark"
-                   href="{{ url_for('donor_stats', user_id=user_id, book_details=book_details, username=username) }}">Book
+                   href="{{ url_for('donor_ui.donor_stats', user_id=user_id, book_details=book_details, username=username) }}">Book
                     Usage</a>
             </div>
             <div class="row justify-content-center">
@@ -147,11 +171,24 @@
         </div>
     </div>
 </div>
-{% endblock %}
+<p id="test">
+
+</p>
+<a id="test1" type="button">click</a>
+{% endblock body %}
 
 {% block script %}
 <script>
 $(document).ready(function(){
+    $('#test1').click(function(){
+        $('#test').append("hello");
+        $("p").append("<b>Appended text</b>");
+    });
+
+    $('#logout').on('click', function(event){
+        $.post('/logout');
+    });
+
     $('#updatedetails').on('click', function(event){
         event.preventDefault();
         $.ajax({
@@ -164,16 +201,24 @@ $(document).ready(function(){
                 'mobile': $('#mobile').val(),
                 'mobile_placeholder': $('#mobile').attr('placeholder'),
                 'address': $('#address').val(),
-                'address_placeholder': $('#address').attr('placeholder')
+                'address_placeholder': $('#address').attr('placeholder'),
+                'city': $('#city').val(),
+                'city_placeholder': $('#city').attr('placeholder'),
+                'state': $('#state').val(),
+                'state_placeholder': $('#state').attr('placeholder'),
+                'pincode': $('#pincode').val(),
+                'pincode_placeholder': $('#pincode').attr('placeholder'),
             },
             type: 'POST',
             url: '/donor/update_details'
         }).done(function(resp){
             var data = JSON.parse(resp);
             $('#username').attr('placeholder', data['username']);
-            $('#email').attr('placeholder', data['email']);
             $('#mobile').attr('placeholder', data['mobile']);
             $('#address').attr('placeholder', data['address']);
+            $('#city').attr('placeholder', data['city']);
+            $('#state').attr('placeholder', data['state']);
+            $('#pincode').attr('placeholder', data['pincode']);
             $('#confirmupdate').show();
             setTimeout(function(){$('#confirmupdate').hide()},1000);
         });

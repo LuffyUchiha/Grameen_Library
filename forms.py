@@ -13,7 +13,7 @@ class LandingPageLoginForm(FlaskForm):
 
 class DonorRegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[Email()])
+    email = StringField('Email', validators=[Email(), Optional()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
@@ -21,16 +21,28 @@ class DonorRegistrationForm(FlaskForm):
     donor_address_1 = StringField('Address', validators=[DataRequired()])
     donor_address_2 = StringField('Address', validators=[Optional()])
     donor_address_3 = StringField('Address', validators=[Optional()])
-    pmi_member = BooleanField('Are you a pmi member?')
+    city = StringField('City', validators=[DataRequired('This will be used by Volunteers while collecting books')])
+    state = StringField('State', validators=[Optional()])
+    pincode = IntegerField('Pincode', validators=[DataRequired('This will be used by Volunteers while collecting books')])
+    pmi_member = BooleanField('Are you a pmi member?', validators=[Optional()])
     submit = SubmitField()
 
 class VolunteerRegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
-    pmi_id = StringField('PMI ID', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
+    volunteer_address_1 = StringField('Address', validators=[DataRequired()])
+    volunteer_address_2 = StringField('Address', validators=[Optional()])
+    volunteer_address_3 = StringField('Address', validators=[Optional()])
+    city = StringField('City', validators=[DataRequired('This will be used to assign books to be collected')])
+    state = StringField('State', validators=[Optional()])
+    pincode = IntegerField('Pincode',
+                           validators=[DataRequired('This will be used to assign books to be collected')])
+    email = StringField('Email', validators=[Email(), Optional()])
+    phone_number = StringField('Phone Number', validators=[DataRequired(), Regexp(regex=r'\d{8,13}')])
     pmi_member = BooleanField('Are you a pmi member?')
+    pmi_id = StringField('PMI ID')
     submit = SubmitField()
 
 class UserRegistrationForm(FlaskForm):
@@ -62,17 +74,12 @@ class PanchayatRegistrationForm(FlaskForm):
     submit = SubmitField()
 
 
-
-class DonorDonateForm(FlaskForm):
-    no_of_books = IntegerField('Number of books', validators=[DataRequired()])
-    submit = SubmitField()
-
-
 class DonationTemplate(FlaskForm):
     book_name = StringField('Book Name', validators=[DataRequired()])
     ISBN = StringField('ISBN')
     author_name = StringField('Author Name')
     category = SelectField('Category', choices=['Category 1', 'Category 2', 'Category 3'])
+    no_of_books = StringField('Number of copies', validators=[Optional()])
     submit = SubmitField('Donate Books')
 
 
