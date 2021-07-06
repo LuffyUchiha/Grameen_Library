@@ -199,6 +199,9 @@ def vol_response(name, pmi_id, is_pmi_member):
     res = time.ctime()
     return res
 
+# borrower
+
+
 
 def don_registration_response(name, email, phone, password, donor_address, donor_city, donor_state, donor_pincode,
                               pmi_number):
@@ -260,7 +263,7 @@ def don_registration_response(name, email, phone, password, donor_address, donor
     return {"User ID": user_id, "Name": name[0], "response": res}
 
 
-def user_registration_response(name, panchayat, email, phone, password):
+def user_registration_response(name, panchayat, email, phone, password, id_proof, location_proof, address, student):
     name = name.split(maxsplit=1)
     if len(name) == 1:
         name.append("")
@@ -283,7 +286,7 @@ def user_registration_response(name, panchayat, email, phone, password):
             INSERT INTO grlib.Borrower_Profile (Borrower_First_Name,Borrower_Last_Name,Borrower_Mobile,Village_Id)
             VALUES (%s,%s,%s,%s);
             """
-        # neede to include columns for id proof, address, email for the user as well but optional
+        # needs to include columns for id proof, address, email for the user as well but optional
         user_insert_sql = """
                 INSERT INTO grlib.USER (Role_ID,username,User_Last_Name,User_Mobile,password)
                 VALUES (%s,%s,%s,%s,%s) RETURNING User_ID;
@@ -448,7 +451,7 @@ def admin_login_response(user_id, password):
             return {"Response": False}
 
 
-def get_categories():
+def get_book_categories():
     conn = connect_Postgres(
         host="localhost",
         database="postgres",
@@ -468,4 +471,4 @@ def get_categories():
 
 
 if __name__ == "__main__":
-    print(get_categories())
+    print(get_book_categories())

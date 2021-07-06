@@ -69,7 +69,7 @@ def update_donor_details():
 def donor_donation_page(username):
     user_id = request.args.get('user_id')
     donation_form = DonationTemplate()
-    donation_form.category.choices = get_categories()
+    donation_form.category.choices = get_book_categories()
     if donation_form.validate_on_submit():
         book_name = donation_form.book_name.data
         no_of_copies = donation_form.no_of_books.data

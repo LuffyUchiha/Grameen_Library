@@ -43,10 +43,8 @@ def library_info_page():
 @ui.route("/", methods=['GET', 'POST'])
 @ui.route("/landing_page", methods=['GET', 'POST'])
 def landing_page():
-    session['logged_in'] = False
     login_form = LandingPageLoginForm()
     if login_form.validate_on_submit():
-
         username = login_form.username.data
         password = login_form.password.data
         res = login_response(username, password)
@@ -60,7 +58,9 @@ def landing_page():
                 session['role'] = 'panchayat'
                 return redirect(url_for('panchayat_page', user_id=res['ID'], username=res['Name']))
             elif res['Role'] == 'user':  # Role = 4 => User
-                return redirect(url_for('user_page', user_id=res['ID'], username=res['Name']))
+                session['logged_in'] = True
+                session['role'] = 'user'
+                return redirect(url_for('user_ui.user_page', user_id=res['ID'], username=res['Name']))
             elif res['Role'] == 'volunteer':  # Role = 5 => Volunteer
                 session['logged_in'] = True
                 session['role'] = 'volunteer'
@@ -112,11 +112,6 @@ def panchayat_page(username):
 
 # user stuff
 
-@ui.route("/user/<username>")
-def user_page(username):
-    user_id = request.args.get('user_id')
-    return render_template('roles/user/user_page.html', user_id=user_id, username=username)
-
 
 # registrations
 
@@ -165,8 +160,8 @@ def user_registration_page():
         location_proof = request.form.get('location_proof')
         address = user_form.user_address_1.data
         student = user_form.student.data
-    # TODO include
-    # user_response(name, panchayat, email, phone, password)
+
+        user_registration_response(username, panchayat, email, phone_number, password, id_proof, location_proof, address, student)
     return render_template('roles/registrations/user_registration.html', form=user_form)
 
 
