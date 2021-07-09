@@ -416,7 +416,6 @@ def login_response(user_id, password):
         user = cur.fetchone()
         cur.close()
         conn.close()
-        print(user)
         if user is not None:
             return {"Response": True, "Name": user[1], "Role": user[2], "ID": user[0]}
         else:

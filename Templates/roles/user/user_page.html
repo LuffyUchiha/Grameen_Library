@@ -24,28 +24,35 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-3"></div>
+        <div class="col-3">
+            <a href="{{ url_for('ui.about_page') }}" class="d-flex mt-4 mb-4 text-secondary">About Grameen
+                Library</a><br>
+            <a href="{{ url_for('ui.donation_info_page') }}" class="d-flex mb-4 text-secondary">How to Donate
+                Books</a><br>
+            <a href="{{ url_for('ui.library_info_page') }}" class="d-flex mb-4 text-secondary">Using the
+                Library</a><br>
+        </div>
         <div class="col-5">
             <table class="table">
                 <thead>
-                    <tr>
-                        <th scope="col">S. No.</th>
-                        <th scope="col">Name of the Book</th>
-                        <th scope="col">Book ID</th>
-                        <th scope="col">Borrowed Date</th>
-                        <th scope="col">Return Date</th>
-                        <th scope="col">Flag</th>
-                    </tr>
+                <tr>
+                    <th scope="col">S. No.</th>
+                    <th scope="col">Name of the Book</th>
+                    <th scope="col">Book ID</th>
+                    <th scope="col">Borrowed Date</th>
+                    <th scope="col">Return Date</th>
+                    <th scope="col">Flag</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>book 1</td>
-                        <td>book 1</td>
-                        <td>book 1</td>
-                        <td>book 1</td>
-                        <td>book 1</td>
-                    </tr>
+                <tr>
+                    <td>1</td>
+                    <td>book 1</td>
+                    <td>book 1</td>
+                    <td>book 1</td>
+                    <td>book 1</td>
+                    <td>book 1</td>
+                </tr>
                 </tbody>
             </table>
             <h3 class="d-flex justify-content-center"> Remember to return the books on time</h3>
@@ -65,9 +72,10 @@
 <script>
 $(document).ready(function(){
     $('#logout').click(function() {
-    $.post('/logout');
+        $.post('/logout');
     });
 })
+
 
 </script>
 {% endblock %}

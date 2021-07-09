@@ -56,7 +56,7 @@ def landing_page():
             elif res['Role'] == 'panchayat':  # Role = 3 => Panchayat
                 session['logged_in'] = True
                 session['role'] = 'panchayat'
-                return redirect(url_for('panchayat_page', user_id=res['ID'], username=res['Name']))
+                return redirect(url_for('panchayat_ui.panchayat_page', user_id=res['ID'], username=res['Name']))
             elif res['Role'] == 'user':  # Role = 4 => User
                 session['logged_in'] = True
                 session['role'] = 'user'
@@ -103,11 +103,6 @@ def admin_page(username):
 
 
 # panchayat stuff
-
-@ui.route("/panchayat/<username>")
-def panchayat_page(username):
-    user_id = request.args.get('user_id')
-    return render_template('roles/panchayat/panchayat_page.html', user_id=user_id, username=username)
 
 
 # user stuff
@@ -214,7 +209,7 @@ def volunteer_registration_page():
 def logout_post():
     session.pop('logged_in', None)
     session.pop('role', None)
-    print('logged out')
+    print(session)
     return redirect(url_for('ui.landing_page'))
 
 @ui.route('/error/<error_code>', defaults={'error_code': 0})

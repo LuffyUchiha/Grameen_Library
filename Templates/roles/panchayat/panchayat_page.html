@@ -5,8 +5,151 @@
 {% endblock %}
 
 {% block body %}
-<div class="container">
-    <p>Panchayat Page</p>
+<div class="jumbotron jumbotron-bluebackground"
+     style="background-image:radial-gradient(rgb(7, 173, 202), rgb(0, 85, 100));" align="center">
+    <div class="row">
+        <div class="col-3">
+            <img src="{{ url_for('static', filename='images/PMI_logo.jpeg') }}" width="60%" height="60%">
+        </div>
+        <div class="col-6">
+            <legend class="boldheading">Panchayat Dashboard</legend>
+        </div>
+        <div class="col-3 align-self-end flex-column">
+            <a type="button" href="{{url_for('ui.landing_page')}}" class="btn btn-danger btn-danger" id="logout">
+                Logout </a>
+        </div>
+    </div>
 </div>
 
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-3">
+            <a href="{{ url_for('ui.about_page') }}" class="d-flex mt-4 mb-4 text-secondary">About Grameen
+                Library</a><br>
+            <a href="{{ url_for('ui.donation_info_page') }}" class="d-flex mb-4 text-secondary">How to Donate
+                Books</a><br>
+            <a href="{{ url_for('ui.library_info_page') }}" class="d-flex mb-4 text-secondary">Using the
+                Library</a><br>
+        </div>
+        <div class="col-5">
+            <div class="row mt-3 mb-3">
+                <div class="col-4">
+                    <label class="form-control-label" for="search-user">Search User:</label>
+                </div>
+                <div class="col-7">
+                    <input class="form-control" type="text" id="search-user" name="search-user">
+                </div>
+                <div class="col-1">
+                    <a href="#" id="search-user-click"><span class="fa fa-search fa-lg fa-2x"></span></a>
+                </div>
+            </div>
+            <div class="row mt-3 mb-4">
+                <div class="col-4">
+                    <label class="form-control-label" for="search-book">Book ID:</label>
+                </div>
+                <div class="col-7">
+                    <input class="form-control" type="text" id="search-book" name="search-book">
+                </div>
+                <div class="col-1">
+                    <a href="#" id="search-book-click"><span class="fa fa-search fa-lg fa-2x"></span></a>
+                </div>
+            </div>
+            <div class="row mt-4 mb-3">
+                <div class="col-4">
+                    <label class="form-control-label" for="issue-return-renew">Issue/Return/Renew:</label>
+                </div>
+                <div class="col-7">
+                    <div class="dropdown mb-3">
+                        <select class="btn form-control border" id="issue-return-renew" name="issue-return-renew">
+                            <option value=""></option>
+                            <option value="Issue">Issue</option>
+                            <option value="Return">Return</option>
+                            <option value="Renew">Renew</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="display: none;" id="date-card">
+                <div class="card-header">Select a Date</div>
+                <div class="card-body">
+                    <div class="row mt-4 mb-3">
+                        <div class="col-4">
+                            <label class="form-control-label" for="issue-date" id="date-card-issue">Issue Date:</label>
+                        </div>
+                        <div class="col-7">
+                            <input class="form-control" type="date" id="issue-date" name="issue-date">
+                        </div>
+                    </div>
+                    <div class="row mt-4 mb-3">
+                        <div class="col-4">
+                            <label class="form-control-label" for="return-date">Return Date:</label>
+                        </div>
+                        <div class="col-7">
+                            <input class="form-control" type="date" id="return-date" name="return-date">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <a href="#" type="button" class="btn btn-lg btn-dark mt-3"
+                           id="issue-return-renew-button">Issue</a>
+                    </div>
+                </div>
+            </div>
+            <div style="display: none;" id="return-exclusive">
+                <div class="d-flex justify-content-center">
+                    <a href="#" type="button" class="btn btn-lg btn-dark mt-3"
+                       id="return-button">Return</a>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-3">
+            <div class="d-flex justify-content-center align-self-center">
+                <p>Logged in as Panchayat</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="test"></div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+
+$(document).ready(function(){
+    $('#logout').click(function() {
+        $.post('/logout');
+    });
+    $('#issue-return-renew').change(function() {
+        var selected = $(this).children("option:selected").val();
+        if(selected.toString() == "Issue"){
+            $('#date-card').show();
+            $('#return-exclusive').hide();
+            $('#date-card-issue').text('Issue Date:');
+        }
+        else if(selected.toString() == "Return"){
+            $('#date-card').hide();
+            $('#return-exclusive').show();
+
+        }
+        else if(selected.toString() == "Renew"){
+            $('#date-card').show();
+            $('#return-exclusive').hide();
+            $('#date-card-issue').text('Renew Date:');
+        }
+        else{
+            $('#date-card').hide();
+            $('#return-exclusive').hide();
+        }
+
+    })
+
+})
+
+
+
+
+</script>
 {% endblock %}
