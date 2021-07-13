@@ -33,35 +33,69 @@
                 Library</a><br>
         </div>
         <div class="col-5">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">S. No.</th>
-                    <th scope="col">Name of the Book</th>
-                    <th scope="col">Book ID</th>
-                    <th scope="col">Borrowed Date</th>
-                    <th scope="col">Return Date</th>
-                    <th scope="col">Flag</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>book 1</td>
-                    <td>book 1</td>
-                    <td>book 1</td>
-                    <td>book 1</td>
-                    <td>book 1</td>
-                </tr>
-                </tbody>
-            </table>
-            <h3 class="d-flex justify-content-center"> Remember to return the books on time</h3>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="d-flex justify-content-center"> List of Borrowed Books</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">S. No.</th>
+                            <th scope="col">Name of the Book</th>
+                            <th scope="col">Book ID</th>
+                            <th scope="col">Borrowed Date</th>
+                            <th scope="col">Return Date</th>
+                            <th scope="col">Flag</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>book 1</td>
+                            <td>book 1</td>
+                            <td>book 1</td>
+                            <td>book 1</td>
+                            <td>book 1</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <h3 class="d-flex justify-content-center mt-4"> Remember to return the books on time</h3>
         </div>
         <div class="col-3">
-            <div class="d-flex justify-content-center align-self-center">
-                <p>Logged in as Borrower</p>
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="d-flex justify-content-center">Your Details</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="" id="details">
+                        <fieldset>
+                            <div class="form-group row">
+                                <div class="col-4 align-self-center">
+                                    <label class="form-control-label" for="name"> Name:</label>
+                                </div>
+                                <div class="col-">
+                                    <input class="form-control" type="text" id="name" name="name" value="volunteer">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-4 align-self-center">
+                                    <label class="form-control-label" for="pincode"> Pincode:</label>
+                                </div>
+                                <div class="col-">
+                                    <input class="form-control" type="text" id="pincode" name="pincode" value="500090">
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="form-group d-flex justify-content-center">
+                            <a class="btn btn-dark" id="updatedetails" href="#">Change Details</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -75,6 +109,7 @@ $(document).ready(function(){
         $.post('/logout');
     });
 })
+
 
 
 </script>

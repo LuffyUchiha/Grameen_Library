@@ -26,7 +26,7 @@ def connect_Postgres(database, user, password, host="localhost"):
 
 # donor
 
-def donate_book(donor_id, book_title, no_of_copies, author_name, ISBN, category):
+def donate_book(donor_id, book_title, no_of_copies, author_name, ISBN, category, start_date, end_date):
     # print(donor_id)
     conn = connect_Postgres(
         host="localhost",
@@ -44,17 +44,36 @@ def donate_book(donor_id, book_title, no_of_copies, author_name, ISBN, category)
         """
         cur.execute(book_sql, (book_title,))
         ISBN = cur.fetchone()
-        #TODO after confirming ISBNs, need to incorporate category logic
+        # TODO after confirming ISBNs, need to incorporate category logic
         if ISBN is None:
             ISBN = "UNSORTED"
+        book_category_sql = """
+        SELECT category_id
+        FROM grlib.book_category
+        WHERE category_name = %s
+        """
+        cur.execute(book_category_sql, (category,))
+        category_id = cur.fetchone()
+        if category_id:
+            category_id = category_id[0]
         book_ins_sql = """
-        INSERT INTO grlib.BOOK (Donor_ID,Donate_Date,ISBN,Book_Name)
-        VALUES (%s,%s,%s,%s) RETURNING book_id
+        INSERT INTO grlib.book_to_be_collected(
+        book_title, author_name, isbn, category_id, donor_id, donation_date, available_date_start, available_date_end)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         no_of_copies = int(no_of_copies) if no_of_copies != None and int(no_of_copies) > 0 else 1
         for _ in range(int(no_of_copies)):
-            cur.execute(book_ins_sql, (donor_id, donate_date, ISBN, book_title,))
-        book_dtl_id = cur.fetchone()
+            cur.execute(book_ins_sql, (
+                book_title if book_title else 'null',
+                author_name if author_name else 'null',
+                ISBN if ISBN else 'null',
+                category_id if category_id else 'null',
+                donor_id if donor_id else 'null',
+                donate_date if donate_date else 'null',
+                start_date if start_date else 'null',
+                end_date if end_date else 'null',
+            )
+                        )
         if ISBN != "UNSORTED":
             book_check_sql = """
             SELECT no_of_copies_actual, no_of_copies_current from grlib.BOOK b right join grlib.book_details bd on b.ISBN=bd.ISBN where bd.ISBN=%s
@@ -72,7 +91,7 @@ def donate_book(donor_id, book_title, no_of_copies, author_name, ISBN, category)
             else:
                 book_detail_ins_sql = """
                         INSERT INTO grlib.BOOK_DETAILS (Book_Title,ISBN,Author_Name,no_of_copies_actual,no_of_copies_current)
-                VALUES (%s,%s,%s,%s,%s)
+                        VALUES (%s,%s,%s,%s,%s)
                         """
                 cur.execute(book_detail_ins_sql, (book_title, ISBN, author_name, 1, 1,))
         cur.close()
@@ -129,6 +148,31 @@ def get_donor_details(id):
         conn.commit()
         conn.close()
         return {'book_details': detail_list, 'donor_details': donor_details}
+
+
+def get_donor_donations():
+    conn = connect_Postgres(
+        host="localhost",
+        database="postgres",
+        user="grlib",
+        password="pass"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        donor_list_sql = """
+        SELECT books.donor_id, donors.donor_first_name, books.donation_date, books.available_date_start, books.available_date_end, count(books.donor_id) as no_of_books_donated
+        FROM grlib.book_to_be_collected as books LEFT JOIN grlib.donor as donors ON books.donor_id=donors.donor_id
+        GROUP BY books.donor_id, donors.donor_first_name, books.donation_date, books.available_date_start, books.available_date_end
+        ORDER BY donors.donor_first_name;
+        """
+        cur.execute(donor_list_sql)
+        donor_list = cur.fetchall() #returns (donor_id, donor_first_name, donation_date, available_date_start, available_date_end, count(donor_id)
+        ret_list = []
+        for donor in donor_list:
+            temp = {'donor_id': donor[0], 'donor_first_name': donor[1], 'donation_date': donor[2],
+                    'available_date_start': donor[3], 'available_date_end': donor[4], 'no_of_books': donor[5]}
+            ret_list.append(temp)
+        return ret_list
 
 
 def update_donor_details_backend(user_id, username, email, mobile, address, city, state, pincode):
@@ -189,6 +233,8 @@ def get_Panchayats():
         print([{"Village_Name": i[0]} for i in panch_list])
         s = [{"Village_Name": i[0]} for i in panch_list]
         return s
+    else:
+        return -1
 
 
 # volunteer
@@ -199,8 +245,113 @@ def vol_response(name, pmi_id, is_pmi_member):
     res = time.ctime()
     return res
 
-# borrower
 
+def get_volunteer_details(user_id):
+    conn = connect_Postgres(
+        host="localhost",
+        database="postgres",
+        user="grlib",
+        password="pass"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        volunteer_details_sql = """
+            SELECT volunteer_id, volunteer_name, volunteer_mobile, volunteer_address, volunteer_city, volunteer_state, volunteer_pincode, email, books_collected, donors_reached
+            FROM grlib.volunteer 
+            WHERE volunteer_id = %s
+        """
+        volunteer_ack_sql = """
+            SELECT volunteer_id, content, "from", from_reference
+            FROM grlib.volunteer_acknowledgements 
+            WHERE volunteer_id = %s
+        """
+        cur.execute(volunteer_details_sql, (int(user_id),))
+        vol_details = cur.fetchone()
+        cur.execute(volunteer_ack_sql, (int(user_id),))
+        acks = cur.fetchall()
+        cur.close()
+        conn.commit()
+        conn.close()
+        return {'state': 'Success', 'user_id': vol_details[0], 'volunteer_name': vol_details[1],
+                'volunteer_mobile': vol_details[2],
+                'volunteer_address': vol_details[3], 'volunteer_city': vol_details[4],
+                'volunteer_state': vol_details[5],
+                'volunteer_pincode': vol_details[6], 'email': vol_details[7], 'books_collected': vol_details[8],
+                'donors_reached': vol_details[9], 'acknowledgements': acks}
+    else:
+        return {'state': 'Fail'}
+
+def get_collections(user_id):
+    """
+    What donors to collect from
+    :return:
+    """
+    conn = connect_Postgres(
+        host="localhost",
+        database="postgres",
+        user="grlib",
+        password="pass"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        collections_sql = """
+        SELECT 
+        donor_first_name as donor_name,
+        available_date_start as start_date,
+        available_date_end as end_date,
+        donor_address,
+        donor_mobile,
+        COUNT(collection_id) as no_of_books
+            FROM
+            (SELECT * FROM
+                grlib.book_to_be_collected as books
+                    INNER JOIN
+                    grlib.donor as donors
+                    on
+                    books.donor_id=donors.donor_id
+                WHERE books.assigned_volunteer_id=%s
+            ) as donors_and_books
+                
+            GROUP BY donor_first_name, available_date_start, available_date_end, donor_address, donor_mobile
+            ORDER BY donor_name
+        """
+        cur.execute(collections_sql, (user_id,))
+        donors = cur.fetchall()
+        cur.close()
+        conn.close()
+        ret_list = []
+        for donor in donors:
+            ret_list.append({'donor_name':donor[0], 'address':donor[3], 'start_date': donor[1], 'end_date': donor[2], 'donor_mobile': donor[4], 'no_of_books':donor[5]})
+        return ret_list
+
+
+
+
+def get_active_volunteers():
+    conn = connect_Postgres(
+        host="localhost",
+        database="postgres",
+        user="grlib",
+        password="pass"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        volunteer_list_sql = """
+        SELECT volunteer_id, volunteer_name, email, books_collected, donors_reached, last_active_date
+        FROM grlib.volunteer
+        where EXTRACT(HOUR from AGE(last_active_date)) < 720
+        """
+        cur.execute(volunteer_list_sql)
+        ret_list = []
+        volunteer_list = cur.fetchall()
+        for volunteer in volunteer_list:
+            temp = {'volunteer_id': volunteer[0], 'volunteer_name': volunteer[1], 'email': volunteer[2],
+                    'books_collected': volunteer[3], 'donors_reached': volunteer[4], 'last_active_date': volunteer[5]}
+            ret_list.append(temp)
+        return ret_list
+
+
+# borrower
 
 
 def don_registration_response(name, email, phone, password, donor_address, donor_city, donor_state, donor_pincode,
@@ -215,7 +366,7 @@ def don_registration_response(name, email, phone, password, donor_address, donor
     :return: {"User ID": user_id, "Name": name[0], "response": 1}, response code, 1 for success
             {"response": 2, "message": Username already exists, choose a different name"}, 2 for conflicting username
     """
-    #TODO where to input pmi_id
+    # TODO where to input pmi_id
     name = name.split(maxsplit=1)
     if len(name) == 1:
         name.append("")
@@ -250,8 +401,8 @@ def don_registration_response(name, email, phone, password, donor_address, donor
         # Assumption that 2 is role id for donor and so on
         user_id = cur.fetchone()[0]
         cur.execute(donor_insert_sql, (
-        user_id, name[0], name[1], phone, email, donor_address, donor_city, donor_state, donor_pincode,
-        pmi_number != None,))
+            user_id, name[0], name[1], phone, email, donor_address, donor_city, donor_state, donor_pincode,
+            pmi_number != None,))
         conn.commit()
         cur.close()
         conn.close()
@@ -341,8 +492,9 @@ def pan_registration_response(name, panchayat_name, email, phone, address, passw
         user_id = -1
     return {"User ID": user_id, "Name": name[0], "response": res}
 
+
 def vol_registration_response(name, password, address, city, state, pincode, email, phone_number, pmi_number):
-    #TODO where to input PMI_ID
+    # TODO where to input PMI_ID
     conn = connect_Postgres(
         host="localhost",
         database="postgres",
@@ -423,6 +575,7 @@ def login_response(user_id, password):
     else:
         return {"Response": False}
 
+#admin
 
 def admin_login_response(user_id, password):
     conn = connect_Postgres(
@@ -449,6 +602,46 @@ def admin_login_response(user_id, password):
         else:
             return {"Response": False}
 
+def appreciate_volunteer(volunteer_id, appreciation, admin_name):
+    conn = connect_Postgres(
+        host="localhost",
+        database="postgres",
+        user="grlib",
+        password="pass"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        appreciate_sql = """
+        INSERT INTO grlib.volunteer_acknowledgements(
+        volunteer_id, content, "from")
+        VALUES (%s, %s, %s)
+        """
+        cur.execute(appreciate_sql, (volunteer_id, appreciation, admin_name,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {'Response': True}
+
+def assign_volunteer(volunteer_id, donor_id, donation_date, available_from, available_till):
+    conn = connect_Postgres(
+        host="localhost",
+        database="postgres",
+        user="grlib",
+        password="pass"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        volunteer_assign_sql ="""
+        UPDATE grlib.book_to_be_collected
+        SET assigned_volunteer_id=%s
+        WHERE donor_id=%s and donation_date=%s and available_date_start=%s and available_date_end=%s 
+        """
+        cur.execute(volunteer_assign_sql, (volunteer_id, donor_id, donation_date, available_from, available_till,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {'Response': 'Update Successful'}
+
 
 def get_book_categories():
     conn = connect_Postgres(
@@ -470,4 +663,4 @@ def get_book_categories():
 
 
 if __name__ == "__main__":
-    print(get_book_categories())
+    print(get_collections(7))

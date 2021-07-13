@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, SelectField
+from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Email, EqualTo, Regexp, Optional
 
 
@@ -78,8 +79,10 @@ class DonationTemplate(FlaskForm):
     book_name = StringField('Book Name', validators=[DataRequired()])
     ISBN = StringField('ISBN')
     author_name = StringField('Author Name')
-    category = SelectField('Category', choices=['Category 1', 'Category 2', 'Category 3'])
+    category = SelectField('Category')
     no_of_books = StringField('Number of copies', validators=[Optional()])
+    collection_from_date = DateField('From', validators=[DataRequired()], format='%Y-%m-%d')
+    collection_to_date = DateField('To', validators=[DataRequired()], format='%Y-%m-%d')
     submit = SubmitField('Donate Books')
 
 

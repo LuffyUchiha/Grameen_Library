@@ -85,21 +85,7 @@ def landing_page():
 
 # admin stuff
 
-@ui.route("/admin", methods=['GET', 'POST'])
-def admin_login_page():
-    admin_form = AdminLoginForm()
-    if admin_form.validate_on_submit():
-        username = admin_form.username.data
-        password = admin_form.password.data
-        if password == 'pass':
-            return redirect(url_for('admin_page', username=username))
 
-    return render_template('roles/admin/admin_login_page.html', form=admin_form)
-
-
-@ui.route("/admin/<username>")
-def admin_page(username):
-    return render_template('roles/admin/admin_page.html', username=username)
 
 
 # panchayat stuff

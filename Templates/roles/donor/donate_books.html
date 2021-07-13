@@ -79,7 +79,7 @@
                         <div class="ml-2">
                             {{ form.category.label(class="form-control-label") }}
                         </div>
-                        <div class="dropdown row justify-content-center">
+                        <div class="dropdown row justify-content-center mb-3">
                             <div class="col-3">
                                 <select class="btn form-control btn-info" id="category" name="category">
                                     {% for x in form.category.choices %}
@@ -88,7 +88,17 @@
                                 </select>
                             </div>
                         </div>
-
+                        <h3 align="center"> When can we collect from you</h3>
+                        <div class="row mt-5 mb-3">
+                            <div class="col-6">
+                                {{ form.collection_from_date.label(class="form-control-label") }}
+                                {{ form.collection_from_date(class="form-control form-control-lg") }}
+                            </div>
+                            <div class="col-6">
+                                {{ form.collection_to_date.label(class="form-control-label") }}
+                                {{ form.collection_to_date(class="form-control form-control-lg") }}
+                            </div>
+                        </div>
                     </fieldset>
                     <div class="form-group row">
                         <div class="col-6" align="center">

@@ -31,7 +31,8 @@ def donor_page(username):
         user_id = request.args.get('user_id')
         details = get_donor_details(user_id)
         donor_details = details['donor_details']
-        donor_details_dict = {'username': donor_details[0], 'mobile_number': donor_details[1], 'email': donor_details[2],
+        donor_details_dict = {'username': donor_details[0], 'mobile_number': donor_details[1],
+                              'email': donor_details[2],
                               'pmi_member': donor_details[3], 'address': donor_details[4], 'city': donor_details[5],
                               'state': donor_details[6], 'pincode': donor_details[7]}
         return render_template('roles/donor/donor_page.html', username=username, user_id=user_id,
@@ -42,7 +43,6 @@ def donor_page(username):
 
 @donor_ui.route('/donor/update_details', methods=['POST'])
 def update_donor_details():
-    print('inside')
     user_id = request.form['user_id']
     username = request.form['username'] if request.form['username'] != "" else request.form['username_placeholder']
     email = request.form['email'] if request.form['email'] != "" else request.form['email_placeholder']
@@ -61,8 +61,9 @@ def update_donor_details():
         state=state,
         pincode=pincode
     )
-    print(resp)
-    return json.dumps({'username': username, 'email': email, 'mobile': mobile, 'address': address, 'city': city, 'state': state, 'pincode': pincode})
+    return json.dumps(
+        {'username': username, 'email': email, 'mobile': mobile, 'address': address, 'city': city, 'state': state,
+         'pincode': pincode})
 
 
 @donor_ui.route("/donor/<username>/donate_books", methods=['GET', 'POST'])
@@ -76,6 +77,8 @@ def donor_donation_page(username):
         ISBN = donation_form.ISBN.data
         author_name = donation_form.author_name.data
         category = request.form.get('category')
+        from_date = donation_form.collection_from_date.data
+        to_date = donation_form.collection_to_date.data
         req = {
             "user_id": user_id,
             "username": username,
@@ -83,14 +86,20 @@ def donor_donation_page(username):
             "book_name": book_name,
             "ISBN": ISBN,
             "author_name": author_name,
-            "category": category
+            "category": category,
+            "collection_from_date": from_date,
+            "collection_to_date": to_date
         }
         # resp = requests.post(url="http://localhost:5000/donor/donor_donation"
         #                          "?user_id={}&book_name={}&no_of_copies={}&ISBN={}&author_name={}&category={}"
         #                      .format(req['user_id'], req['book_name'], req['no_of_copies'], req['ISBN'],
         #                              req['author_name'], req['category']))
-        resp = requests.post(url=site_name + url_for('donor_donation_post_page', user_id=req['user_id'], book_name=req['book_name'], no_of_copies=req['no_of_copies'], ISBN=req['ISBN'],
-                                     author_name=req['author_name'], category=req['category']))
+        resp = requests.post(
+            url=site_name + url_for('donor_ui.donor_donation_post_page', user_id=req['user_id'], book_name=req['book_name'],
+                                    no_of_copies=req['no_of_copies'], ISBN=req['ISBN'],
+                                    author_name=req['author_name'], category=req['category'],
+                                    collection_from_date=req['collection_from_date'],
+                                    collection_to_date=req['collection_to_date']))
         if str(resp.content).split("'")[1] == "Success":
             flash("Book Donated Successfully", "success")
             donation_form.book_name.data = ""
@@ -114,7 +123,10 @@ def donor_donation_post_page():
     author_name = req.get("author_name")
     ISBN = req.get("ISBN")
     category = req.get("category")
-    if donate_book(user_id, book_name, no_of_copies, author_name, ISBN, category) == -1:
+    collection_from_date = req.get("collection_from_date")
+    collection_to_date = req.get("collection_to_date")
+    print(collection_to_date, collection_from_date)
+    if donate_book(user_id, book_name, no_of_copies, author_name, ISBN, category, collection_from_date, collection_to_date) == -1:
         return "Failure"
     else:
         return "Success"
