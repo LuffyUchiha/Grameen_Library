@@ -16,12 +16,49 @@
 <!--                <div class="collapse navbar-collapse" id="Navbar">-->
 <!--                    <ul class="navbar-nav mr-auto">-->
 <!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('ui.about_page') }}">About Grameen Library</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('ui.donation_info_page') }}"> About Donation</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link" href="{{ url_for('ui.library_info_page') }}"> About Usage</a></li>-->
+
 <!--                    </ul>-->
 <!--                </div>-->
 <!--        </div>-->
 <!--</nav>-->
+
+<div id="confirm-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg" role="content">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Following are the donations to be collected</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Book Name</th>
+                            <th scope="col">Donation Date</th>
+                            <th scope="col">Volunteer Name</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for i, donation in to_be_donated %}
+                        {% if donation.get('volunteer_name') != 'Not Assigned' %}
+                        <tr id="select-donation{{i}}">
+                            <td about="book-name">{{ donation.get('book_name') }}</td>
+                            <td about="doantion-date">{{ donation.get('donation_date') }}</td>
+                            <td about="volunteer_name">{{ donation.get('volunteer_name') }}</td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+<!--                    <div class="d-flex justify-content-center">-->
+<!--                        <a href="#" type="button" class="btn btn-lg btn-danger" id="confirm-donation">Confirm Donation</a>-->
+<!--                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% if not vol_assigned %}
 <div class="jumbotron jumbotron-bluebackground"
      style="background-image:radial-gradient(rgb(7, 173, 202), rgb(0, 85, 100));" align="center">
     <div class="row">
@@ -34,6 +71,23 @@
         <div class="col-3"></div>
     </div>
 </div>
+{% else %}
+<div class="jumbotron"
+     style="background-image:radial-gradient(rgb(255, 102, 102), rgb(255, 153, 153)); background-color: rgb(rgb(255, 102, 102);" align="center">
+    <div class="row">
+        <div class="col-3">
+            <img src="{{ url_for('static', filename='images/PMI_logo.jpeg') }}" width="60%" height="60%">
+
+        </div>
+        <div class="col-6">
+            <legend class="boldheading">Donor Dashboard</legend>
+            <blockquote style="font-size: 1.5em;" align="center">A volunteer has been assigned.</blockquote>
+            <a href="#" type="button" class="btn btn-lg btn-danger" id="book-confirm-modal">Check Donation</a>
+        </div>
+        <div class="col-3"></div>
+    </div>
+</div>
+{% endif %}
 
 
 <div class="container">
@@ -174,12 +228,17 @@
 <p id="test">
 
 </p>
-<a id="test1" type="button">click</a>
+<a id="test1" type="button"></a>
 {% endblock body %}
 
 {% block script %}
 <script>
 $(document).ready(function(){
+
+    $('#book-confirm-modal').click(function(){
+        $('#confirm-modal').modal('show');
+    })
+
     $('#test1').click(function(){
         $('#test').append("hello");
         $("p").append("<b>Appended text</b>");

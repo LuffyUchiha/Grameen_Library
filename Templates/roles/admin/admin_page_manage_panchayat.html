@@ -1,0 +1,132 @@
+{% extends "bootstrap_enabler.html" %}
+
+{% block head %}
+<title> Manage Panchayat</title>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card mt-5">
+        <div class="card-header">
+            Existing Panchayats
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Village ID</th>
+                    <th scope="col">Village Name</th>
+                    <th scope="col">Panchayat Name</th>
+                    <th scope="col">Village Address</th>
+                    <th scope="col">POC Name</th>
+                    <th scope="col">POC Number</th>
+                    <th scope="col">POC Mail</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for pan in panchayat_list %}
+                <tr>
+                    <td scope="col">{{ pan.get('village_id') }}</td>
+                    <td scope="col">{{ pan.get('village_name') }}</td>
+                    <td scope="col">{{ pan.get('panchayat_name') }}</td>
+                    <td scope="col">{{ pan.get('village_address') }}</td>
+                    <td scope="col">{{ pan.get('poc_name') }}</td>
+                    <td scope="col">{{ pan.get('poc_number') }}</td>
+                    <td scope="col">{{ pan.get('poc_mail') }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <form method="post" action="" class="mt-4">
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Create a Panchayat</legend>
+            <div class="card " style="display: none; background-color:palegreen;" id="pan-confirmation">
+                <div class="card-body" align="center">
+                    Panchayat Created
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-3" align="center">
+                    <label for="village-name" class="form-control-label">Village Name</label><span class="text-danger">*</span>
+                </div>
+                <div class="col-9">
+                    <input type="text" name="village-name" id="village-name" class="form-control form-control-lg" required>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-3" align="center">
+                    <label for="panchayat-name" class="form-control-label">Panchayat Name</label><span class="text-danger">*</span>
+                </div>
+                <div class="col-9">
+                    <input type="text" name="panchayat-name" id="panchayat-name" class="form-control form-control-lg" required>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-3" align="center">
+                    <label for="village-address" class="form-control-label">Village Address</label><span class="text-danger">*</span>
+                </div>
+                <div class="col-9">
+                <textarea name="village-address" id="village-address"
+                          class="form-control form-control-lg" required></textarea>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-3" align="center">
+                    <label for="poc-name" class="form-control-label">POC Name</label>
+                </div>
+                <div class="col-9">
+                    <input type="text" name="poc-name" id="poc-name" class="form-control form-control-lg">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-3" align="center">
+                    <label for="poc-number" class="form-control-label">POC Number</label>
+                </div>
+                <div class="col-9">
+                    <input type="text" name="poc-number" id="poc-number" class="form-control form-control-lg">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-3" align="center">
+                    <label for="poc-mail" class="form-control-label">POC Email</label>
+                </div>
+                <div class="col-9">
+                    <input type="email" name="poc-mail" id="poc-mail" class="form-control form-control-lg">
+                </div>
+            </div>
+            <div class=" d-flex justify-content-center mt-3">
+                <a type="button" class="btn btn-dark btn-lg" href="#" id="pan-submit">Submit</a>
+            </div>
+
+        </fieldset>
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('#pan-submit').click(function(){
+            $.ajax({
+                data:{
+                    'village_name': $('#village-name').val(),
+                    'panchayat_name': $('#panchayat-name').val(),
+                    'village_address': $('#village-address').val(),
+                    'poc_name': $('#poc-name').val(),
+                    'poc_number': $('#poc-number').val(),
+                    'poc_mail': $('#poc-mail').val()
+                },
+                type:'POST',
+                url:'/admin/{{username}}/manage_panchayat'
+            }).done(function(resp){
+                if(resp == "Success"){
+                    $('#pan-confirmation').show();
+                    setTimeout(function(){$('#pan-confirmation').hide()},3000);
+                }
+            });
+        })
+    })
+</script>
+{% endblock %}

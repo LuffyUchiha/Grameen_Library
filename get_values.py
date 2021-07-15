@@ -109,7 +109,7 @@ def get_donor_details(id):
     :return: Dictionery
             {
             "book_list": list of dictionaries of the form {"Book ID": __, "Book Name": __, "Donate Date": __, "isIdentified": __}
-             "donor_details":[donor_first_name, donor_mobile, donor_email, is_pmi_member, donor_address, city, state, pincode]
+             "donor_details":[donor_name, donor_mobile, donor_email, is_pmi_member, donor_address, city, state, pincode]
              }
     """
 
@@ -129,7 +129,7 @@ def get_donor_details(id):
             where d.donor_id=%s order by donate_date
             """
         donor_details_sql = """
-            SELECT donor_first_name, donor_mobile, donor_email, is_pmi_member, donor_address, donor_city, donor_state, donor_pincode
+            SELECT donor_name, donor_mobile, donor_email, is_pmi_member, donor_address, donor_city, donor_state, donor_pincode
                 FROM grlib.donor
                 WHERE donor_id=%s
         """
@@ -160,18 +160,49 @@ def get_donor_donations():
     if conn is not None:
         cur = conn.cursor()
         donor_list_sql = """
-        SELECT books.donor_id, donors.donor_first_name, books.donation_date, books.available_date_start, books.available_date_end, count(books.donor_id) as no_of_books_donated
+        SELECT books.donor_id, donors.donor_name, books.donation_date, books.available_date_start, books.available_date_end, count(books.donor_id) as no_of_books_donated, books.assigned_volunteer_id
         FROM grlib.book_to_be_collected as books LEFT JOIN grlib.donor as donors ON books.donor_id=donors.donor_id
-        GROUP BY books.donor_id, donors.donor_first_name, books.donation_date, books.available_date_start, books.available_date_end
-        ORDER BY donors.donor_first_name;
+        GROUP BY books.donor_id, donors.donor_name, books.donation_date, books.available_date_start, books.available_date_end, books.assigned_volunteer_id
+        ORDER BY donors.donor_name;
         """
         cur.execute(donor_list_sql)
-        donor_list = cur.fetchall() #returns (donor_id, donor_first_name, donation_date, available_date_start, available_date_end, count(donor_id)
+        donor_list = cur.fetchall() #returns (donor_id, donor_name, donation_date, available_date_start, available_date_end, count(donor_id)
         ret_list = []
         for donor in donor_list:
-            temp = {'donor_id': donor[0], 'donor_first_name': donor[1], 'donation_date': donor[2],
-                    'available_date_start': donor[3], 'available_date_end': donor[4], 'no_of_books': donor[5]}
+            temp = {'donor_id': donor[0], 'donor_name': donor[1], 'donation_date': donor[2],
+                    'available_date_start': donor[3], 'available_date_end': donor[4], 'no_of_books': donor[5],
+                    'assigned_volunteer_id':donor[6] if donor[6] else -1}
             ret_list.append(temp)
+        return ret_list
+
+def get_donor_donations_by_id(user_id):
+    conn = connect_Postgres(
+        host="localhost",
+        database="postgres",
+        user="grlib",
+        password="pass"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        donor_donation_list_sql = """
+        SELECT books.book_title, books.author_name, books.isbn, books.category_id, books.donor_id, books.donation_date, books.available_date_start, books.available_date_end, books.collection_id, books.assigned_volunteer_id, vol.volunteer_name
+        FROM grlib.book_to_be_collected as books Left JOIN grlib.volunteer as vol on books.assigned_volunteer_id=vol.volunteer_id
+        Where donor_id = %s
+        """
+        cur.execute(donor_donation_list_sql, (user_id,))
+        donation_list = cur.fetchall()
+        ret_list = []
+        for donation  in donation_list:
+            ret_list.append({
+                'book_name': donation[0],
+                'author_name': donation[1],
+                'isbn': donation[2],
+                'category_id': donation[3],
+                'donation_date': donation[5],
+                'start_date': donation[6],
+                'end_date': donation[7],
+                'volunteer_name': donation[10] if donation[9] else 'Not Assigned'
+            })
         return ret_list
 
 
@@ -186,9 +217,9 @@ def update_donor_details_backend(user_id, username, email, mobile, address, city
         cur = conn.cursor()
         donor_details_update_sql = """
         UPDATE grlib.donor
-        SET donor_first_name=%s, donor_mobile=%s, donor_email=%s, donor_address=%s, donor_city=%s, donor_state=%s, donor_pincode=%s
+        SET donor_name=%s, donor_mobile=%s, donor_email=%s, donor_address=%s, donor_city=%s, donor_state=%s, donor_pincode=%s
         WHERE donor_id = %s
-        RETURNING donor_first_name as new_username, donor_mobile as new_mobile, donor_email as new_email, donor_address as new_address, 
+        RETURNING donor_name as new_username, donor_mobile as new_mobile, donor_email as new_email, donor_address as new_address, 
         donor_city as new_city, donor_state as new_state, donor_pincode as new_pincode
 	    """
         user_details_update_sql = """
@@ -213,7 +244,7 @@ def update_donor_details_backend(user_id, username, email, mobile, address, city
 
 # panchayat
 
-def get_Panchayats():
+def get_panchayats():
     conn = connect_Postgres(
         host="localhost",
         database="postgres",
@@ -223,18 +254,50 @@ def get_Panchayats():
     if conn is not None:
         cur = conn.cursor()
         panchayat_list_sql = """
-            SELECT Village_Name from grlib.village order by village_name
+            SELECT * from grlib.village order by village_name
             """
         cur.execute(panchayat_list_sql)
         panch_list = cur.fetchall()
         cur.close()
         conn.commit()
         conn.close()
-        print([{"Village_Name": i[0]} for i in panch_list])
-        s = [{"Village_Name": i[0]} for i in panch_list]
+        s = [
+            {
+                'village_id': i[0],
+                'village_name': i[1],
+                'panchayat_name':i[2],
+                'village_address':i[3],
+                'poc_name':i[4],
+                'poc_number':i[5],
+                'poc_mail':i[6]
+            }
+            for i in panch_list
+        ]
         return s
     else:
         return -1
+
+def add_panchayat(village_name, panchayat_name, village_address, poc_name, poc_number, poc_mail):
+    conn = connect_Postgres(
+        host="localhost",
+        database="postgres",
+        user="grlib",
+        password="pass"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        panchayat_insert_sql = """
+        INSERT INTO grlib.village(
+        village_name, panchayat_name, village_address, village_contact_name, village_contact_mobile, village_contact_email)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        cur.execute(panchayat_insert_sql, (village_name, panchayat_name, village_address, poc_name, poc_number, poc_mail,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return{'state': 'success'}
+    else:
+        return {'state': 'failure'}
 
 
 # volunteer
@@ -296,7 +359,7 @@ def get_collections(user_id):
         cur = conn.cursor()
         collections_sql = """
         SELECT 
-        donor_first_name as donor_name,
+        donor_name as donor_name,
         available_date_start as start_date,
         available_date_end as end_date,
         donor_address,
@@ -312,7 +375,7 @@ def get_collections(user_id):
                 WHERE books.assigned_volunteer_id=%s
             ) as donors_and_books
                 
-            GROUP BY donor_first_name, available_date_start, available_date_end, donor_address, donor_mobile
+            GROUP BY donor_name, available_date_start, available_date_end, donor_address, donor_mobile
             ORDER BY donor_name
         """
         cur.execute(collections_sql, (user_id,))
@@ -351,6 +414,40 @@ def get_active_volunteers():
         return ret_list
 
 
+def enter_book(donor_id, book_name, isbn, volunteer_id):
+    conn = connect_Postgres(
+        host="localhost",
+        database="postgres",
+        user="grlib",
+        password="pass"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        enter_book_sql = """
+        INSERT INTO grlib.book(
+        donor_id, donate_date, isbn, book_name, volunteer_id)
+        VALUES (%s, CURRENT_DATE, %s, %s, %s)
+        """
+        remove_to_be_donated_sql = """
+        DELETE FROM grlib.book_to_be_collected
+	    WHERE donor_id=%s and book_title=%s
+        """
+        volunteer_contribution_update_sql = """
+        UPDATE grlib.volunteer
+        SET	books_collected=(SELECT count(book_id)
+            FROM grlib.book
+            where volunteer_id=%s), donors_reached=(SELECT count(donor_id)
+        FROM grlib.book
+        where volunteer_id=%s)
+        WHERE volunteer_id=%s
+        """
+        cur.execute(enter_book_sql, (donor_id, isbn, book_name, volunteer_id,))
+        cur.execute(remove_to_be_donated_sql, (donor_id, book_name,))
+        cur.execute(volunteer_contribution_update_sql,(volunteer_id, volunteer_id, volunteer_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+
 # borrower
 
 
@@ -366,10 +463,6 @@ def don_registration_response(name, email, phone, password, donor_address, donor
     :return: {"User ID": user_id, "Name": name[0], "response": 1}, response code, 1 for success
             {"response": 2, "message": Username already exists, choose a different name"}, 2 for conflicting username
     """
-    # TODO where to input pmi_id
-    name = name.split(maxsplit=1)
-    if len(name) == 1:
-        name.append("")
     conn = connect_Postgres(
         host="localhost",
         database="postgres",
@@ -390,8 +483,8 @@ def don_registration_response(name, email, phone, password, donor_address, donor
             return {"response": 2, "message": "Username already exists, choose a different name"}
 
         donor_insert_sql = """
-        INSERT INTO grlib.DONOR (Donor_ID,Donor_First_Name,Donor_Last_Name,Donor_Mobile, Donor_Email, Donor_Address, donor_city, donor_state, donor_pincode, is_pmi_member)
-        VALUES (%s,%s,%s,%s,%s,%s,%s%s%s%s);
+        INSERT INTO grlib.DONOR (Donor_ID,Donor_Name,Donor_Mobile, Donor_Email, Donor_Address, donor_city, donor_state, donor_pincode, is_pmi_member)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);
         """
         user_insert_sql = """
         INSERT INTO grlib.USER (Role_ID,username,User_Mobile,password)
@@ -401,7 +494,7 @@ def don_registration_response(name, email, phone, password, donor_address, donor
         # Assumption that 2 is role id for donor and so on
         user_id = cur.fetchone()[0]
         cur.execute(donor_insert_sql, (
-            user_id, name[0], name[1], phone, email, donor_address, donor_city, donor_state, donor_pincode,
+            user_id, name, phone, email, donor_address, donor_city, donor_state, donor_pincode,
             pmi_number != None,))
         conn.commit()
         cur.close()
@@ -642,6 +735,34 @@ def assign_volunteer(volunteer_id, donor_id, donation_date, available_from, avai
         conn.close()
         return {'Response': 'Update Successful'}
 
+def get_books_list():
+    conn = connect_Postgres(
+        host="localhost",
+        database="postgres",
+        user="grlib",
+        password="pass"
+    )
+    if conn is not None:
+        cur = conn.cursor()
+        books_sql = """
+        SELECT * FROM grlib.book ORDER BY book_id
+        """
+        cur.execute(books_sql)
+        books_list = cur.fetchall()
+        ret_list = []
+        for book in books_list:
+            ret_list.append({
+                'book_id':book[0],
+                'donor_id':book[1],
+                'donation_date':book[2],
+                'isbn':book[3],
+                'book_title':book[4],
+                'volunteer_id': book[5],
+            })
+        return ret_list
+
+
+
 
 def get_book_categories():
     conn = connect_Postgres(
@@ -663,4 +784,4 @@ def get_book_categories():
 
 
 if __name__ == "__main__":
-    print(get_collections(7))
+    print(get_books_list())

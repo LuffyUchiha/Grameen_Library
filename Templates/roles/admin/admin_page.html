@@ -1,169 +1,43 @@
 {% extends "bootstrap_enabler.html" %}
 
 {% block head %}
-<title> Admin Page</title>
+<title>Admin Page</title>
 {% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-    <h3 align="center">Logged in as {{username}}</h3>
+<div class="jumbotron jumbotron-bluebackground"
+     style="background-image:radial-gradient(rgb(7, 173, 202), rgb(0, 85, 100));" align="center">
     <div class="row">
-        <div class="col-12">
-            <div class="row">
-                <div class="col-6 mt-5">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="d-flex justify-content-center">Donors who donated</h4>
-                        </div>
-                        <div class="card-body" style="min-height: 50vh ;">
-                            <div style="height:30%;overflow:auto;">
-                                <table class="table" id="donor-list">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">Donor ID</th>
-                                        <th scope="col">Donor Name</th>
-                                        <th scope="col">Donated On</th>
-                                        <th scope="col">Available From</th>
-                                        <th scope="col">Available Till</th>
-                                        <th scope="col">No of Books</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for i, donor in donation_list %}
-                                        <tr id="donor-selected{{i}}">
-                                            <td about="donor-id">{{ donor.get('donor_id') }}</td>
-                                            <td about="donor-name">{{ donor.get('donor_first_name') }}</td>
-                                            <td about="donation-date">{{ donor.get('donation_date') }}</td>
-                                            <td about="donor-available-from">{{ donor.get('available_date_start') }}</td>
-                                            <td about="donor-available-till">{{ donor.get('available_date_end') }}</td>
-                                            <td about="donor-number-of-books">{{ donor.get('no_of_books') }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="col-6 mt-5">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="d-flex justify-content-center">Active Volunteers</h4>
-                        </div>
-                        <div class="card-body" style="min-height: 50vh;">
-                            <div style="height:30%;overflow:auto;">
-                                <table class="table" id="active-volunteer-list">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">Volunteer ID</th>
-                                        <th scope="col">Volunteer Name</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Books Collected So Far</th>
-                                        <th scope="col">Donors Reached So Far</th>
-                                        <th scope="col">Last Active Date</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for i, volunteer in volunteer_list %}
-                                    <tr id="volunteer-selected1">
-                                        <td about="vol-id">{{ volunteer.get('volunteer_id') }}</td>
-                                        <td about="vol-name">{{ volunteer.get('volunteer_name') }}</td>
-                                        <td about="vol-email">{{ volunteer.get('email') }}</td>
-                                        <td about="vol-books-collected">{{ volunteer.get('books_collected') }}</td>
-                                        <td about="vol-donors-reached">{{ volunteer.get('donor_reached') }}</td>
-                                        <td about="vol-last-active">{{ volunteer.get('last_active_date') }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 card mt-2 mb-2" id="assign-confirmation" style="display: none; background-color: palegreen;"></div>
-                <div class="col-12 mt-4 d-flex justify-content-center">
-                    <a class="btn btn-lg btn-dark" type="button" href="#" id="assign">Assign</a>
-                </div>
-                <div class="col-12 d-flex justify-content-center mt-5 mb-5">
-                    <div style="display:none;" id="appreciation">
-                        <textarea placeholder="Appreciation" rows="5" cols="40" id="appreciation-data"></textarea><br>
-                        <a href="#" type="button" class="btn btn-lg btn-dark">Give Appreciation to the Volunteer</a>
-                    </div>
-                </div>
-
-            </div>
+        <div class="col-3">
+            <img src="{{ url_for('static', filename='images/PMI_logo.jpeg') }}" width="60%" height="60%">
+        </div>
+        <div class="col-6">
+            <legend class="boldheading">Admin Dashboard</legend>
+        </div>
+        <div class="col-3 align-self-end flex-column">
+            <a type="button" href="{{url_for('admin_ui.admin_login_page')}}" class="btn btn-danger btn-danger" id="logout">
+                Logout </a>
         </div>
     </div>
 </div>
-<p id="test"></p>
+
+<div class="container-fluid">
+    <div class="card" align="center">
+        <div class="card-body">
+            <a href="{{ url_for('admin_ui.admin_page_manage_donation', username=username) }}" type="button" class="btn btn-dark btn-lg mt-3 mb-3">Manage Donations</a><br>
+            <a href="{{ url_for('admin_ui.admin_page_collect_books', username=username) }}" type="button" class="btn btn-dark btn-lg mt-3 mb-3">Manage Collections</a><br>
+            <a href="{{ url_for('admin_ui.admin_page_manage_panchayat', username=username) }}" type="button" class="btn btn-dark btn-lg mt-3 mb-3">Manage Panchayats</a><br>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block script %}
 <script>
-$(document).ready(function(){
-    var donor_details = new Object();
-    donor_details_active = false;
-    var volunteer_details = new Object();
-    volunteer_details_active = false;
-    var admin_name = "{{ username }}";
-
-    $('#appreciation').click(function(){
-        if($('#appreciation-data').val()){
-            $.post('/admin/appreciate_volunteer',{
-            'appreciation': $('#appreciation-data').val(),
-            'admin_name': admin_name,
-            'volunteer_id': volunteer_details.id,
-            });
-        }
-    });
-
-    $('[id^="donor-selected"]').click(function(){
-        $(this).parent().children().css('background-color', '');
-        $(this).css('background-color', 'palegreen');
-        donor_details_active = true;
-        donor_details.id = $(this).children().filter('[about="donor-id"]').text();
-        donor_details.name = $(this).children().filter('[about="donor-name"]').text();
-        donor_details.donation_date = $(this).children().filter('[about="donation-date"]').text();
-        donor_details.available_from = $(this).children().filter('[about="donor-available-from"]').text();
-        donor_details.available_till = $(this).children().filter('[about="donor-available-till"]').text();
-        donor_details.no_of_books = $(this).children().filter('[about="donor-no-of-books"]').text();
-
-    });
-
-    $('[id^="volunteer-selected"]').click(function(){
-        $('#appreciation').show();
-        $(this).parent().children().css('background-color', '');
-        $(this).css('background-color', 'palegreen');
-        volunteer_details_active = true;
-        volunteer_details.id = $(this).children().filter('[about="vol-id"]').text();
-        volunteer_details.name = $(this).children().filter('[about="vol-name"]').text();
-        volunteer_details.email = $(this).children().filter('[about="vol-email"]').text();
-        volunteer_details.books_collected = $(this).children().filter('[about="vol-books-collected"]').text();
-        volunteer_details.donors_reached = $(this).children().filter('[about="vol-donors-reached"]').text();
-        volunteer_details.last_active = $(this).children().filter('[about="vol-last-active"]').text();
-    });
-    $('#assign').click(function(){
-        if(!donor_details_active || !volunteer_details_active){
-            $('#assign-confirmation').show();
-            $('#assign-confirmation').html("<div class='card-header d-flex justify-content-center'> Choose both a donor and a volunteer </div>");
-            setTimeout(function(){$('#assign-confirmation').hide()},2000);
-        }
-        else{
-            $.ajax({
-                    data:{
-                        'donor_details':JSON.stringify(donor_details),
-                        'volunteer_details':JSON.stringify(volunteer_details),
-                    },
-                    type:'POST',
-                    url:'/admin/assign'
-                    }).done(function(resp){
-                        $('#assign-confirmation').show();
-                        $('#assign-confirmation').html("<div class='card-header d-flex justify-content-center'>the volunteer " + volunteer_details.name + " has been assigned to " + donor_details.name + "</div>");
-                        setTimeout(function(){$('#assign-confirmation').hide()},5000);
-                    });
-            }
-    });
+    $(document).ready(function(){
+    $('#logout').click(function(){
+        $.post('/logout');
+    })
 })
 </script>
 {% endblock %}

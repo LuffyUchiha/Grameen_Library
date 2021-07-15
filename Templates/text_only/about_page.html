@@ -2,6 +2,15 @@
 
 {% block head %}
 <title>About Gramen Library</title>
+<style>
+    p{
+        font-size: 24px;
+    }
+
+
+
+
+</style>
 {% endblock %}
 
 {% block body %}
@@ -14,30 +23,183 @@
         <div class="col-6">
             <legend class="boldheading">Grameen Library</legend>
             <blockquote style="font-size: 1.5em;" align="center">-- A PMIPCC Initiative</blockquote>
+            <a href="{{ url_for('ui.landing_page') }}" type="button" class="btn btn-danger btn-lg">Go Back</a>
         </div>
         <div class="col-3"></div>
     </div>
 </div>
 
-<div class = "container mt-3">
-	<p>The Grameen Library initiative of PMIPCC seeks to empower the underprivileged children by making free books available to them. In a scenario where many villages struggle to maintain basic amenities, a library would be viewed as a luxury.  We wish to bridge this gap by bringing books to the doorsteps of these villagers, and giving access to all.
-Our objective is to set up mini-libraries in the villages which can be used by both adults and children. We hope this will help them immensely by expanding the horizons of young minds and help them build a better future for themselves.
-		With the help of our donors, we would like to spread knowledge through books and transmit it to future generations. By contributing books, we promote the great cause of shaping the future of countless students from disadvantaged backgrounds across villages.</p>
-	<b>So how do we do it?</b><br>
-<p>We are reaching out to urban residents to encourage them to donate used books. We even offer doorstep collection. Such recycled books would not only become animated again, they could become tools for self-improvement in the hands of a rural child.
-</p>
-	<b>Where do the Books go?</b><br>
-<p>We have identified some panchayats and villages and we are working with them to set up the Grameen libraries. The books will be sorted and sent to these Grameen Libraries.
-	Going forward, we will continue to add more Panchayats and reach out to more villages.</p>
-	<b>Who gets to use these books?</b><br>
-<p>The people residing in the nearby villages can borrow these books. In case of text books, the school going children in the nearby villages can use them as supplemental reference.
-We are creating an application that will record details about the book, the donor, and the borrowers. It will track the issue and the return of the books. Donors can track their books too.
-</p><b>What kind of books can be donated?</b><br>
-<p>Well, all kinds of books can be donated - Children's Story Books, Magazines, Fiction, books on science, history, philosophy, religion etc. Competitive Exam preparation material will be handy for job aspirants.
-	A sub set of this initiative is a Book Bank for the under-privileged school-going children. All these books would be distributed through Grameen libraries.</p>
-	<b>How can I donate?</b><br>
-	<p>If you want to donate books, please send email to office@pmi-pcc.org or call us on 7569214789.</p>
-	<p>We hope this initiative will make a difference and open a world of opportunities for the underprivileged!</p>
-	<blockquote>As they say - "A reader today… A leader tomorrow”</blockquote>
+<div class="container-fluid mt-3">
+    <h1>About Us</h1>
+    <div class="row">
+        <div class="col-7">
+            <p>The Grameen Library initiative of PMIPCC seeks to empower the underprivileged children by making free
+                books
+                available to them. In a scenario where many villages struggle to maintain basic amenities, a library
+                would be
+                viewed as a luxury. We wish to bridge this gap by bringing books to the doorsteps of these villagers,
+                and giving
+                access to all.
+                Our objective is to set up mini-libraries in the villages which can be used by both adults and children.
+                We hope
+                this will help them immensely by expanding the horizons of young minds and help them build a better
+                future for
+                themselves.
+                With the help of our donors, we would like to spread knowledge through books and transmit it to future
+                generations. By contributing books, we promote the great cause of shaping the future of countless
+                students from
+                disadvantaged backgrounds across villages.</p>
+        </div>
+        <div class="col">
+            <div id="mycarousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner" role="listbox">
+                    <div class="carousel-item active">
+                        <img class="d-block img-fluid"
+                             src="{{ url_for('static', filename='images/functionality images/chinnamandadi grameen library.jpeg') }}"
+                             width="60%" height="60%">
+                        <div class="carousel-caption d-none d-md-block">
+                            <!--                            <p class="text-dark">-->
+                            <!--                                Grameen Library Chinnamandadi-->
+                            <!--                            </p>-->
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img class="d-block img-fluid"
+                             src="{{ url_for('static', filename='images/functionality images/chinnamandadi grameen library donating.jpeg') }}"
+                             width="60%" height="60%">
+                        <div class="carousel-caption d-none d-md-block">
+
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img class="d-block img-fluid"
+                             src="{{ url_for('static', filename='images/functionality images/chinnamandadi grameen library other entrance.jpeg') }}"
+                             width="60%" height="60%">
+                        <div class="carousel-caption d-none d-md-block">
+                            <p class="d-none d-sm-block">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img class="d-block img-fluid"
+                             src="{{ url_for('static', filename='images/functionality images/chinnamandadi grameen library wide shot.jpeg') }}"
+                             width="60%" height="60%">
+                        <div class="carousel-caption d-none d-md-block">
+                            <p class="d-none d-sm-block">
+                            </p>
+                        </div>
+                    </div>
+                    <ol class="carousel-indicators">
+                        <li data-target="#mycarousel" data-slide-to="0" class="active"></li>
+                        <li data-target="#mycarousel" data-slide-to="1"></li>
+                        <li data-target="#mycarousel" data-slide-to="2"></li>
+                        <li data-target="#mycarousel" data-slide-to="3"></li>
+                    </ol>
+                </div>
+                <!--                <a class="carousel-control-prev" href="#mycarousel" role="button" data-slide="prev">-->
+                <!--                    <span class="carousel-control-prev-icon"></span>-->
+                <!--                </a>-->
+                <!--                <a class="carousel-control-next" href="#mycarousel" role="button" data-slide="next">-->
+                <!--                    <span class="carousel-control-next-icon"></span>-->
+                <!--                </a>-->
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-5">
+            <div id="mycarousel2" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner" role="listbox">
+                    <div class="carousel-item active">
+                        <img class="d-block img-fluid"
+                             src="{{ url_for('static', filename='images/functionality images/NGURANG grameen library.jpeg') }}"
+                             width="60%" height="30vh">
+                        <div class="carousel-caption d-none d-md-block">
+                            <!--                            <p class="text-dark">-->
+                            <!--                                Grameen Library Chinnamandadi-->
+                            <!--                            </p>-->
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img class="d-block img-fluid"
+                             src="{{ url_for('static', filename='images/functionality images/NGURANG library books.jpeg') }}"
+                             width="60%" height="60%">
+                        <div class="carousel-caption d-none d-md-block">
+
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img class="d-block img-fluid"
+                             src="{{ url_for('static', filename='images/functionality images/Arunachal Pradesh NGURANG Learning Institute.jpeg') }}"
+                             width="60%" height="60%">
+                        <div class="carousel-caption d-none d-md-block">
+                            <p class="d-none d-sm-block">
+                            </p>
+                        </div>
+                    </div>
+                    <ol class="carousel-indicators">
+                        <li data-target="#mycarousel2" data-slide-to="0" class="active"></li>
+                        <li data-target="#mycarousel2" data-slide-to="1"></li>
+                        <li data-target="#mycarousel2" data-slide-to="2"></li>
+                    </ol>
+                </div>
+                <!--                <a class="carousel-control-prev" href="#mycarousel" role="button" data-slide="prev">-->
+                <!--                    <span class="carousel-control-prev-icon"></span>-->
+                <!--                </a>-->
+                <!--                <a class="carousel-control-next" href="#mycarousel" role="button" data-slide="next">-->
+                <!--                    <span class="carousel-control-next-icon"></span>-->
+                <!--                </a>-->
+            </div>
+        </div>
+        <div class="col">
+            <p>The Grameen Library initiative of PMIPCC seeks to empower the underprivileged children by making free
+                books
+                available to them. In a scenario where many villages struggle to maintain basic amenities, a library
+                would be
+                viewed as a luxury. We wish to bridge this gap by bringing books to the doorsteps of these villagers,
+                and giving
+                access to all.
+                Our objective is to set up mini-libraries in the villages which can be used by both adults and children.
+                We hope
+                this will help them immensely by expanding the horizons of young minds and help them build a better
+                future for
+                themselves.
+                With the help of our donors, we would like to spread knowledge through books and transmit it to future
+                generations. By contributing books, we promote the great cause of shaping the future of countless
+                students from
+                disadvantaged backgrounds across villages.</p>
+            <h1>So how do we do it?</h1><br>
+            <p>We are reaching out to urban residents to encourage them to donate used books. We even offer doorstep
+                collection.
+                Such recycled books would not only become animated again, they could become tools for self-improvement
+                in the
+                hands of a rural child.
+            </p>
+            <h1>Where do the Books go?</h1><br>
+            <p>We have identified some panchayats and villages and we are working with them to set up the Grameen
+                libraries. The
+                books will be sorted and sent to these Grameen Libraries.
+                Going forward, we will continue to add more Panchayats and reach out to more villages.</p>
+            <h1>Who gets to use these books?</h1><br>
+            <p>The people residing in the nearby villages can borrow these books. In case of text books, the school
+                going
+                children in the nearby villages can use them as supplemental reference.
+                We are creating an application that will record details about the book, the donor, and the borrowers. It
+                will
+                track the issue and the return of the books. Donors can track their books too.
+            </p>
+        </div>
+
+    </div>
+
+
+    <h1>What kind of books can be donated?</h1><br>
+    <p>Well, all kinds of books can be donated - Children's Story Books, Magazines, Fiction, books on science, history,
+        philosophy, religion etc. Competitive Exam preparation material will be handy for job aspirants.
+        A sub set of this initiative is a Book Bank for the under-privileged school-going children. All these books
+        would be distributed through Grameen libraries.</p>
+    <h1>How can I donate?</h1><br>
+    <p>If you want to donate books, please send email to office@pmi-pcc.org or call us on 7569214789.</p>
+    <p>We hope this initiative will make a difference and open a world of opportunities for the underprivileged!</p>
+    <blockquote>As they say - "A reader today… A leader tomorrow”</blockquote>
 </div>
 {% endblock %}

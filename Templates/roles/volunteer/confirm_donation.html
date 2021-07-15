@@ -1,0 +1,64 @@
+{% extends "bootstrap_enabler.html" %}
+
+{% block head %}
+<title> Confirm Donation</title>
+{% endblock head %}
+
+{% block body %}
+
+<div style="background-color:rgb(7, 173, 202);height:20vh"></div>
+<div style="background-color:rgb(7, 173, 202);height:10vh"></div>
+<div style="background-color:rgb(7, 173, 202)">
+    <div class="container">
+        <div class="card border border-success">
+            <div style="background-color:white " class="ml-3 mt-3 mb-3 mr-3">
+                <div class=" card alert-success" id="success" style="display: none;">
+                    <div class="card-body">
+                        Book Added
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="donor-id" class="form-control-label">Donor ID</label>
+                    <input type="text" name="donor-id" id="donor-id" class="form-control form-control-lg">
+                </div>
+                <div class="form-group">
+                    <label for="book-name" class="form-control-label">Book Name</label>
+                    <input type="text" name="book-name" id="book-name" class="form-control form-control-lg">
+                </div>
+                <div class="form-group">
+                    <label for="isbn" class="form-control-label">ISBN</label>
+                    <input type="text" name="isbn" id="isbn" class="form-control form-control-lg">
+                </div>
+                <div class="d-flex justify-content-center">
+                    <a href=javascript:history.back() class="btn btn-lg btn-dark mr-3">Go Back</a>
+                    <a href="#" class="btn btn-lg btn-dark" id="confirm-donation">Confirm Donation</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="test"></div>
+<div style="background-color:rgb(7, 173, 202);height:50vh"></div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('#confirm-donation').click(function(){
+            $.ajax({
+                data:{
+                    'donor_id': $('#donor-id').val(),
+                    'book_name': $('#book-name').val(),
+                    'isbn': $('#isbn').val(),
+                },
+                type:'POST',
+                url:'/volunteer/confirm_donation',
+            }).done(function(resp){
+                $('#success').show();
+                $('#success').text(resp.toString());
+            });
+        });
+    })
+</script>
+{% endblock %}

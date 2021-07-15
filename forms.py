@@ -86,6 +86,8 @@ class DonationTemplate(FlaskForm):
     submit = SubmitField('Donate Books')
 
 
+
+
 class AdminLoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])

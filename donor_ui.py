@@ -30,13 +30,21 @@ def donor_page(username):
     if session.get('logged_in') and session.get('role') == 'donor':
         user_id = request.args.get('user_id')
         details = get_donor_details(user_id)
+        to_be_donated = get_donor_donations_by_id(user_id)
+        vol_assigned = False
+        for x in to_be_donated:
+            if x.get('volunteer_name') != 'Not Assigned':
+                vol_assigned = True
+                break
         donor_details = details['donor_details']
         donor_details_dict = {'username': donor_details[0], 'mobile_number': donor_details[1],
                               'email': donor_details[2],
                               'pmi_member': donor_details[3], 'address': donor_details[4], 'city': donor_details[5],
                               'state': donor_details[6], 'pincode': donor_details[7]}
         return render_template('roles/donor/donor_page.html', username=username, user_id=user_id,
-                               book_details=details['book_details'], donor_details=donor_details_dict)
+                               book_details=details['book_details'], donor_details=donor_details_dict,
+                               to_be_donated=zip(range(to_be_donated.__len__()),to_be_donated),
+                               vol_assigned=vol_assigned)
     else:
         return redirect(url_for('ui.error_page'))
 
@@ -95,7 +103,8 @@ def donor_donation_page(username):
         #                      .format(req['user_id'], req['book_name'], req['no_of_copies'], req['ISBN'],
         #                              req['author_name'], req['category']))
         resp = requests.post(
-            url=site_name + url_for('donor_ui.donor_donation_post_page', user_id=req['user_id'], book_name=req['book_name'],
+            url=site_name + url_for('donor_ui.donor_donation_post_page', user_id=req['user_id'],
+                                    book_name=req['book_name'],
                                     no_of_copies=req['no_of_copies'], ISBN=req['ISBN'],
                                     author_name=req['author_name'], category=req['category'],
                                     collection_from_date=req['collection_from_date'],
@@ -126,7 +135,8 @@ def donor_donation_post_page():
     collection_from_date = req.get("collection_from_date")
     collection_to_date = req.get("collection_to_date")
     print(collection_to_date, collection_from_date)
-    if donate_book(user_id, book_name, no_of_copies, author_name, ISBN, category, collection_from_date, collection_to_date) == -1:
+    if donate_book(user_id, book_name, no_of_copies, author_name, ISBN, category, collection_from_date,
+                   collection_to_date) == -1:
         return "Failure"
     else:
         return "Success"

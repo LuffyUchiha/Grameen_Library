@@ -30,16 +30,6 @@ def about_page():
     return render_template('text_only/about_page.html')
 
 
-@ui.route("/about_donation")
-def donation_info_page():
-    return render_template('text_only/donation_info.html')
-
-
-@ui.route("/about_how_to_use")
-def library_info_page():
-    return render_template('text_only/library_info.html')
-
-
 @ui.route("/", methods=['GET', 'POST'])
 @ui.route("/landing_page", methods=['GET', 'POST'])
 def landing_page():
@@ -117,7 +107,6 @@ def donor_registration_page():
         city = donor_form.city.data
         state = donor_form.state.data
         pincode = donor_form.pincode.data
-
         res = don_registration_response(username, email, phone, password, address, city, state, pincode, pmi_number)
         if res['response'] == 1:
             flash("User Registered Successfully\nUser ID - {}\nUsername - {}".format(res['User ID'], username),

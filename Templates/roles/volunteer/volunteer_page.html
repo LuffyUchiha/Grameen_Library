@@ -28,7 +28,6 @@
                 <b>Achievements</b>
             </div>
             <div class="card-body">
-                <!--                TODO 0 changes to the database value-->
                 <b id="books-donated">Books Collected: {{ vol_details.get('books_collected') }}</b><br>
                 <b id="donors-reached">Donors Reached: {{ vol_details.get('donors_reached') }}</b><br>
             </div>
@@ -61,7 +60,7 @@
                     </blockquote>
                     {% endfor %}
                 </div>
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end" >
                     <a href="#" type="button" id="acknowledgement-see-less-button" style="display:none;">see less</a>
                 </div>
                 {% endif %}
@@ -110,6 +109,9 @@
             <div class="card-body" id="search-result-display">
 
             </div>
+        </div>
+        <div class="card d-flex justify-content-center" id="confirm-donation" style="position: absolute; bottom: 20%; right: 40%">
+            <a href="{{url_for('volunteer_ui.confirm_donation', volunteer_id=vol_details.get('user_id'))}}" type="button" class="btn btn-lg btn-dark">Confirm a Donation</a>
         </div>
 
     </div>
